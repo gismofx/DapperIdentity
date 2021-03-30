@@ -1,0 +1,40 @@
+﻿CREATE TABLE `identityuser` (
+	`ID` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	`UserName` VARCHAR(256) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	`Email` VARCHAR(256) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	`NormalizedEmail` VARCHAR(256) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	`NormalizedUserName` VARCHAR(256) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	`PasswordHash` VARCHAR(256) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	`EmailConfirmed` BIT(1) NULL DEFAULT NULL,
+	`PhoneNumber` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	`PhoneNumberConfirmed` BIT(1) NULL DEFAULT NULL,
+	`TwoFactorEnabled` BIT(1) NULL DEFAULT NULL,
+	`FirstName` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci',
+	`LastName` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_general_ci'
+)
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+;
+
+
+CREATE TABLE "IdentityUser" (
+	"Id"	TEXT NOT NULL UNIQUE,
+	"UserName"	TEXT,
+	"Email"	TEXT,
+	"NormalizedEmail"	TEXT,
+	"NormalizedUserName"	TEXT,
+	"PasswordHash"	TEXT,
+	"EmailConfirmed"	INT,
+	"PhoneNumber"	TEXT,
+	"PhoneNumberConfirmed"	TEXT,
+	"TwoFactorEnabled"	INT,
+	"FirstName"	TEXT,
+	"LastName"	TEXT,
+	PRIMARY KEY("Id")
+);
+
+CREATE TABLE "IdentityRole" (
+	"Id"	TEXT NOT NULL,
+	"Name"	TEXT NOT NULL,
+	PRIMARY KEY("Id")
+);
