@@ -1,5 +1,5 @@
 # DapperIdentity
-Microsoft Identity Framework with Customer User/Role Stores using Identity
+Microsoft Identity Framework with Custom User/Role Stores using Identity
 
 This is geared toward using Identity Framework for Blazor Server applications where you are using Dapper for data access.
 The UserStore and RoleStore data access layer classes have been customized to use Dapper. They are in no-way complete. All of the underlying Identity Logic is unchanged, only they way Identity accesses the data in a database.
