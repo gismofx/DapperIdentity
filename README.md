@@ -40,3 +40,4 @@ To Do:
 * Handle invalid user/pass. 
 * Add remember me checkbox
 * Handle Email Confirmation(Add Controller Action)
+* NuGet Package
