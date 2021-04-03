@@ -2,6 +2,7 @@
 using System.Reflection;
 using DapperIdentity.Controllers;
 using DapperIdentity.Stores;
+using System.Data;
 using DapperRepository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -38,6 +39,16 @@ namespace DapperIdentity.Services
             services.AddMvcCore().AddControllersAsServices().AddApplicationPart(assembly);// ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(part));
 
             return services;
+        }
+
+        public static IServiceCollection AddDapperIdentityWithCustomCookies<T>(this IServiceCollection services,
+                                                                         string connectionString,
+                                                                         TimeSpan cookieExpiration,
+                                                                         bool requireConfirmedEmail = true,
+                                                                         bool slidingExpiration = true) where T : IDbConnection
+        {
+            services.AddDbConnectionInstantiatorForRepositories<T>(connectionString);
+            return services.AddDapperIdentityWithCustomCookies(cookieExpiration, requireConfirmedEmail, slidingExpiration);
         }
 
         /// <summary>
@@ -98,6 +109,14 @@ namespace DapperIdentity.Services
             return services.AddVanillaIdentityDefaults(TimeSpan.FromDays(7), requireConfirmedEmail, slidingExpiration);
         }
 
+        /// <summary>
+        /// Adds Dapper Identity Stores with DEFAULT Microsoft Identity UI
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="cookieExpiration"></param>
+        /// <param name="requireConfirmedEmail"></param>
+        /// <param name="slidingExpiration"></param>
+        /// <returns></returns>
         public static IServiceCollection AddVanillaIdentityDefaults(this IServiceCollection services,
                                                                 TimeSpan cookieExpiration,
                                                                 bool requireConfirmedEmail = true,
@@ -110,7 +129,7 @@ namespace DapperIdentity.Services
             services.AddTransient<IUserStore<IdentityUser>, UserStore>();
             services.AddTransient<IRoleStore<IdentityRole>, RoleStore>();
             services.AddIdentity<IdentityUser, IdentityRole>()
-                //.AddDefaultUI()
+                .AddDefaultUI()
                 .AddDefaultTokenProviders();
 
             services.Configure<IdentityOptions>(opts =>
