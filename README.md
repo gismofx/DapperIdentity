@@ -44,7 +44,7 @@ Also to top of `_Login_Partial.cshtml` add:
 @using IdentityUser = DapperIdentity.Models.CustomIdentityUser
 ```
 
-## Alternative Start To Microsoft's Default UI##
+## Alternative Start To Microsoft's Default UI
 Logging in requires an HTTP POST so the cookies can created.
 Here's a simple HTML form section which you can use for logging in which you can put on any page in Blazor:
 
