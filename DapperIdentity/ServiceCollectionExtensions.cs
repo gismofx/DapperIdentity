@@ -106,7 +106,7 @@ namespace DapperIdentity.Services
                                                                 bool requireConfirmedEmail = true,
                                                                 bool slidingExpiration = true)
         {
-            return services.AddVanillaIdentityDefaults(TimeSpan.FromDays(7), requireConfirmedEmail, slidingExpiration);
+            return services.AddDapperIdentityWithVanillaUIAndDefaults(TimeSpan.FromDays(7), requireConfirmedEmail, slidingExpiration);
         }
 
         /// <summary>
