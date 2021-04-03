@@ -102,7 +102,7 @@ namespace DapperIdentity.Services
         /// <param name="requireConfirmedEmail"></param>
         /// <param name="slidingExpiration"></param>
         /// <returns></returns>
-        public static IServiceCollection AddVanillaIdentityDefaults(this IServiceCollection services,
+        public static IServiceCollection AddDapperIdentityWithVanillaUIAndDefaults(this IServiceCollection services,
                                                                 bool requireConfirmedEmail = true,
                                                                 bool slidingExpiration = true)
         {
@@ -117,7 +117,7 @@ namespace DapperIdentity.Services
         /// <param name="requireConfirmedEmail"></param>
         /// <param name="slidingExpiration"></param>
         /// <returns></returns>
-        public static IServiceCollection AddVanillaIdentityDefaults(this IServiceCollection services,
+        public static IServiceCollection AddDapperIdentityWithVanillaUIAndDefaults(this IServiceCollection services,
                                                                 TimeSpan cookieExpiration,
                                                                 bool requireConfirmedEmail = true,
                                                                 bool slidingExpiration = true)
