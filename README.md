@@ -32,6 +32,15 @@ services.AddDapperIdentityWithCustomCookies(TimeSpan.FromMinutes(10));//Or howev
 services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<DapperIdentity.Models.CustomIdentityUser>>();
 ```
 
+## Note on using Microsoft's Default Identity UI
+*Note: In order to scaffold, it requires a DBContext class; create one; it is not used and can be delete after scaffolding*
+You **Must** Scaffold out the pages that you want to use and **add** the following to the top of each page's cshtml.cs file:
+`using IdentityUser = DapperIdentity.Models.CustomIdentityUser`
+
+Also to top of `_Login_Partial.cshtml` add
+`@using IdentityUser = DapperIdentity.Models.CustomIdentityUser`
+
+## Alternative Start To Microsoft's Default UI##
 Logging in requires an HTTP POST so the cookies can created.
 Here's a simple HTML form section which you can use for logging in which you can put on any page in Blazor:
 
