@@ -24,7 +24,7 @@ var connString = Configuration.GetConnectionString("DefaultConnection");
 services.AddDbConnectionInstantiatorForRepositories<MySqlConnection>(connString);
 
 //To use DEFAULT MS Identity UI Razor Pages Add Vanilla
-//services.AddVanillaIdentityDefaults();
+//services.AddDapperIdentityWithVanillaUIAndDefaults();
 //or only Identity Middle and Back-End use this:
 services.AddDapperIdentityWithCustomCookies(TimeSpan.FromMinutes(10));//Or however long you want login cookie to last
 
