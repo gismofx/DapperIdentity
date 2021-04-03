@@ -33,7 +33,7 @@ services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticati
 ```
 
 ## Note on using Microsoft's Default Identity UI
-*Note: In order to scaffold, it requires a DBContext class; create one; it is not used and can be delete after scaffolding*
+*Note: In order to scaffold, it requires a DBContext class; create one; it is not used and can be delete after scaffolding.*  
 You **Must** Scaffold out the pages that you want to use and **add** the following to the top of each page's cshtml.cs file:  
 ```c#
 using IdentityUser = DapperIdentity.Models.CustomIdentityUser
