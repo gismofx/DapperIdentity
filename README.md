@@ -13,12 +13,18 @@ More Examples coming soon.
 
 ## Getting Started
 In `startup.cs` add the following
-
-`Using DapperIdentity.Services;`
+```c#
+using DapperIdentity.Services;
+using DapperRepository;
+```
 
 In `ConfigureServices` method, add the following:
 ```c#
-services.AddDapperIdentityWithCustomCookies(TimeSpan.FromMinutes(10));
+var connString = Configuration.GetConnectionString("DefaultConnection");
+services.AddDbConnectionInstantiatorForRepositories<MySqlConnection>(connString);
+
+
+services.AddDapperIdentityWithCustomCookies(TimeSpan.FromMinutes(10));//Or however long you want login cookie to last
 services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<DapperIdentity.Models.CustomIdentityUser>>();
 ```
 
