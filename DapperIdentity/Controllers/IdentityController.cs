@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using IdentityUser = DapperIdentity.Models.CustomIdentityUser;
 
@@ -57,9 +59,25 @@ namespace DapperIdentity.Controllers
             {
                 return Redirect("/");
             }
+            if (result.RequiresTwoFactor)
+            {
+                //return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+            }
+            if (result.IsLockedOut)
+            {
+                //_logger.LogWarning("User account locked out.");
+                return RedirectToPage("./Lockout");
+            }
+            if (result.IsNotAllowed)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                return Redirect("/");
+                //return Page();
+            }
             else
             {
-                return null;
+                return Redirect("/");
+                //return null;
             }
 
         }
@@ -75,5 +93,44 @@ namespace DapperIdentity.Controllers
             }
             return Redirect("/");
         }
+        
+        [HttpGet]
+        public async Task<ActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return RedirectToPage("/Index");
+            }
+
+            var user = await _UserManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{userId}'.");
+            }
+
+            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+            var result = await _UserManager.ConfirmEmailAsync(user, code);
+            var StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+            return RedirectToPage("/");
+        }
+
+        /*
+        [HttpPost]
+        public async Task<ActionResult> CreateUser()
+        {
+            var user = new IdentityUser()
+            {
+                Email = "email@email.com",
+                EmailConfirmed = true,
+                FirstName = "user",
+                UserName = "email@email.com"
+            };
+            var result = await _UserManager.CreateAsync(user,"StrongP@ssword1");
+            if (result.Succeeded)
+                return Ok("User Created");
+            else
+                return StatusCode(StatusCodes.Status500InternalServerError,$"Error Creating User: {String.Join(",",result.Errors.Select(x=>x.Code).ToList())}");
+        }
+        */
     }
 }

@@ -1,13 +1,13 @@
-﻿
+﻿using System;
 using System.Collections.Generic;
-using Dapper.Contrib.Extensions;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DapperIdentity.Models
 {
-    [Table("IdentityUser")]
-    public class CustomIdentityUser : ICustomIdentityUser
+    public interface ICustomIdentityUser
     {
-        [ExplicitKey]
         public string Id { get; set; }
         public string UserName { get; set; }
         public string NormalizedUserName { get; set; }
@@ -21,11 +21,5 @@ namespace DapperIdentity.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string SecurityStamp { get; set; }
-
-        public bool IsEnabled { get; set; }
-
-        [Write(false)]
-        public List<CustomIdentityRole> Roles { get; set; }
-
     }
 }

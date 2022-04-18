@@ -11,21 +11,12 @@ namespace DapperIdentity.Stores
 {
     public class RoleStore : IRoleStore<IdentityRole>
     {
-        private readonly string _connectionString;
-
         private IRepository<IdentityRole> repository;
 
-
-        //public RoleStore(IConfiguration configuration)
-        //{
-        //    _connectionString = configuration.GetConnectionString("DefaultConnection");
-        //    repository = new Repository<IdentityRole>(configuration);//(_connectionString);
-        //}
         public RoleStore(IRepository<IdentityRole> roleRepository)
         {
             repository = roleRepository; // new Repository<IdentityRole>(_connectionString);//(_connectionString);
         }
-
 
         public async Task<IdentityResult> CreateAsync(IdentityRole role, CancellationToken cancellationToken)
         {

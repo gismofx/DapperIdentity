@@ -28,8 +28,6 @@ namespace DapperIdentity.Stores
                              //IUserLockoutStore<>
                             
     {
-        private readonly string _connectionString;
-
         private IRepository<IdentityUser> repository;
 
         public UserStore(IRepository<IdentityUser> userRepository)
@@ -133,7 +131,7 @@ namespace DapperIdentity.Stores
             throw new NotImplementedException();
         }
 
-        public Task<IdentityUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+        public async Task<IdentityUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             IdentityUser foundUser;
@@ -141,11 +139,9 @@ namespace DapperIdentity.Stores
             { 
                 var dynamicParams = new DynamicParameters();
                 dynamicParams.Add("UserName", normalizedUserName, System.Data.DbType.String);
-                conn.Open();
-                foundUser = conn.QueryFirstOrDefault<IdentityUser>("SELECT * FROM IdentityUser WHERE Upper(UserName) = @UserName", dynamicParams);
-
+                foundUser = await conn.QueryFirstOrDefaultAsync<IdentityUser>("SELECT * FROM IdentityUser WHERE NormalizedUserName = @UserName", dynamicParams);
             }
-            return Task.FromResult<IdentityUser>(foundUser);            
+            return foundUser;            
         }
 
         public Task<string> GetEmailAsync(IdentityUser user, CancellationToken cancellationToken)
