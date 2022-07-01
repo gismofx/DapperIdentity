@@ -10,15 +10,11 @@
     <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.6" />
     <PackageReference Include="TheDapperRepository" Version="1.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\CPEBlazorComponents\CPEIdentity\CPEIdentity\CPEIdentity.csproj" />
   </ItemGroup>
 
 </Project>

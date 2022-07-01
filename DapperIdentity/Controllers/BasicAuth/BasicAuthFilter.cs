@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using IdentityUser = DapperIdentity.Models.CustomIdentityUser;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 
 //ref https://codeburst.io/adding-basic-authentication-to-an-asp-net-core-web-api-project-5439c4cf78ee

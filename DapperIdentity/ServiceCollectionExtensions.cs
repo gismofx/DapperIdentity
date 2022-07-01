@@ -15,9 +15,7 @@ using IdentityUser = DapperIdentity.Models.CustomIdentityUser;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using DapperIdentity.Helpers;
 using Microsoft.AspNetCore.Authentication;
-using DapperIdentity.ViewModels;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using DapperRepository;
 
 namespace DapperIdentity.Services
 {

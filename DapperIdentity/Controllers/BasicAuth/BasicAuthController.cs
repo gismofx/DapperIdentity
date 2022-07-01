@@ -60,14 +60,13 @@ namespace DapperIdentity.Controllers.BasicAuth
         [HttpPost]
         public async Task<IActionResult> Test()
         {
-
             if (true)
             {
-                return Ok();
+                return await Task.FromResult(Ok());
             }
             else
             {
-                return BadRequest(new { message = "Username or password is incorrect" });
+                return await Task.FromResult(BadRequest(new { message = "Username or password is incorrect" }));
             }
         }
 
