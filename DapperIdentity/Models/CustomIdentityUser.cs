@@ -21,11 +21,16 @@ namespace DapperIdentity.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string SecurityStamp { get; set; }
-
         public bool IsEnabled { get; set; }
 
         [Write(false)]
         public List<CustomIdentityRole> Roles { get; set; }
+
+        /// <summary>
+        /// Used in UI to Hide/Show Roles in expansion panel for each user
+        /// </summary>
+        [Write(false)]
+        public bool ShowRoles { get; set; } = false;
 
     }
 }

@@ -43,7 +43,7 @@ namespace DapperIdentity.Stores
 
             using (var connection = repository.DbConnection)
             {
-                var sql = @"SELECT * FROM IdentityUser as U JOIN IdentityRole as R ON U.Id=R.Id";
+                var sql = @"SELECT * FROM IdentityUser as U LEFT JOIN IdentityRole as R ON U.Id=R.Id";
                 var list = await connection.QueryAsync<IdentityUser, IdentityRole, IdentityUser>(
                     sql,
                     (user, role) =>

@@ -68,7 +68,6 @@ namespace DapperIdentity.Services
 
             return services;
         }
-
         /// <summary>
         /// Private Extension To Add The Stores and Database Repositories
         /// </summary>
@@ -124,7 +123,8 @@ namespace DapperIdentity.Services
         {
 
             services.TryAddDapperIdentityDatabaseStores();
-            services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultTokenProviders()
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddDefaultTokenProviders()
                 .AddSignInManager<CustomSignInManager>()
                 .AddRoleStore<RoleStore>()
                 .AddUserStore<UserStore>(); //m,aybe deleet?
