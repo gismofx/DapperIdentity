@@ -21,5 +21,6 @@ namespace DapperIdentity.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string SecurityStamp { get; set; }
+        public bool IsEnabled { get; set; }
     }
 }

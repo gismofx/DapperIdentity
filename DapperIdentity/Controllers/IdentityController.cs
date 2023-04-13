@@ -53,6 +53,13 @@ namespace DapperIdentity.Controllers
                 }, "auth");
             ClaimsPrincipal claims = new ClaimsPrincipal(claimsIdentity);
             */
+
+            //return a message?
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrEmpty(password))
+            {
+                return Redirect("/"); 
+            }
+
             var result = await _SignInManager.PasswordSignInAsync(name, password, true, false);
             //await HttpContext.SignInAsync(claims);
             if (result.Succeeded)

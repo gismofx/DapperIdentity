@@ -1,0 +1,268 @@
+﻿@page "/ValueLists"
+@attribute [Authorize(Roles = "SuperAdmin, Admin, ValueList")]
+@implements IDisposable
+@inject CPEIdentity.ViewModels.ValueListEditorViewModel ViewModel
+@using System.ComponentModel;
+@inject ISnackbar Snackbar
+
+chad fix this 
+
+<MudText Typo="Typo.h3">Value List Editor</MudText>
+<MudContainer>
+    <MudGrid>
+        <MudItem xs="12">
+            <MudSwitch @bind-Checked="ViewModel.LockedFromEditing" Label="@(ViewModel.LockedFromEditing?"Editing Locked":"Editing Unlocked")"/>
+        </MudItem>
+        <MudItem xs="12">
+            <MudButton Variant="Variant.Filled" Disabled="@ViewModel.LockedFromEditing" StartIcon="@Icons.Material.Add" OnClick="@( () => ViewModel.AddNewListClick())">Add New List</MudButton>
+        </MudItem>
+        <MudItem xs="12">
+            <MudTable T="CPEIdentity.Models.OptionList" Items="@ViewModel.OptionLists" Hover="@hover" SelectedItemChanged="@( async (ol) => await ViewModel.SelectList(ol) )">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Value Lists</MudText>
+                    <MudToolBarSpacer />
+                    <MudTextField @bind-Value="search_string" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh>Name</MudTh>
+                    <MudTh>Description</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Name">@context.ListName</MudTd>
+                    <MudTd DataLabel="Description">@context.Description</MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>
+        </MudItem>
+        <MudItem xs="12">
+            <MudPaper Elevation="2" Class="pa-2">
+                
+                @*<div class="col-1 p-2 align-self-center">
+                    <MatSlideToggle Label="@(UnlockNameEdit? "Edit Enabled" : "Edit Locked")" @bind-Value="@UnlockNameEdit"></MatSlideToggle>
+                </div>
+                <div class="col-3 p-1">
+                    <MatTextField Label="List Name" @bind-Value="ViewModel.SelectedOptionList.ListName" FullWidth="true" ReadOnly="@(!UnlockNameEdit)" @onfocusout="@(async () => await ViewModel.UpdateSelectedOptionList())"></MatTextField>
+                </div>
+                <div class="col p-1">
+                    <MatTextField Label="Description" @bind-Value="ViewModel.SelectedOptionList.Description" FullWidth="true" ReadOnly="@(!UnlockNameEdit)" @onfocusout="@(async () => await ViewModel.UpdateSelectedOptionList())"></MatTextField>
+                </div>
+                
+                @if (ViewModel.SelectedOptionList != null)
+                {
+                    <MudText Typo="MudBlazor.Typo.h6">Selected List Information</MudText>
+                    <MudTextField Label="List Name" Disabled="ViewModel.LockedFromEditing"  T="string" @bind-Value="@ViewModel.SelectedOptionList.ListName" @onfocusout="@(async () => await ViewModel.UpdateSelectedOptionList())"></MudTextField>
+                    <MudTextField Label="Description" Disabled="ViewModel.LockedFromEditing" @bind-Value="@ViewModel.SelectedOptionList.Description" @onfocusout="@(async () => await ViewModel.UpdateSelectedOptionList())"></MudTextField>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h5">Select A List Above...</MudText>
+                }
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12">
+            @if (ViewModel.SelectedOptionList?.Options != null)
+            {
+                <MudTable Items="@ViewModel.SelectedOptionList.Options" Dense="@dense" Hover="@hover" @bind-SelectedItem="@ViewModel.SelectedOption" CommitEditTooltip="Commit Edit" OnCommitEditClick="@( async (e) => await ViewModel.UpdateSelectedOption())">
+                    @* OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))">*@
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">@ViewModel.SelectedOptionList.ListName Options</MudText>
+                        <MudToolBarSpacer />
+                        <MudTextField @bind-Value="search_string" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    </ToolBarContent>
+                    <ColGroup>
+                        <col style="width:50px;" />
+                        <col style="width:75%;" />
+                        <col />
+                    </ColGroup>
+                    <HeaderContent>
+                        <MudTh>Order</MudTh>
+                        <MudTh>Option Name</MudTh>
+                        <MudTh>Numerical Value(Integer)</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Order">@context.SortOrder</MudTd>
+                        <MudTd DataLabel="Option Name">@context.OptionName</MudTd>
+                        <MudTd DataLabel="Numerical Value (Integer)">@context.IntegerValue</MudTd>
+                    </RowTemplate>
+                    <RowEditingTemplate>
+                        <MudTd>
+                            <MudTextField @bind-Value="@context.SortOrder" />
+                        </MudTd>
+                        <MudTd>
+                            <MudTextField @bind-Value="@context.OptionName" />
+                        </MudTd>
+                        <MudTd>
+                            <MudTextField @bind-Value="@context.IntegerValue" />
+                        </MudTd>
+                    </RowEditingTemplate>
+                    <PagerContent>
+                        <MudButton StartIcon="@Icons.Material.Add" Disabled="ViewModel.LockedFromEditing" OnClick="@(async () => await ViewModel.AddNewOptionClick())">Add Option</MudButton>
+                        <MudTablePager />
+                    </PagerContent>
+                </MudTable>
+                @*
+                <MatTable Items="@ViewModel.SelectedOptionList.Options" Striped="true" class="mat-elevation-z5" AllowSelection="true" SelectionChanged="@( (o) => ViewModel.SelectOption(o as Option))">
+                    <MatTableHeader>
+                        <th>Order</th>
+                        <th><div style="width:300px">Option Name</div></th>
+                        <th>(Numerical Value(Integer))</th>
+                        <th></th>
+                    </MatTableHeader>
+                    <MatTableRow>
+                        <td><MatTextField @bind-Value="context.SortOrder" @onfocusout="@( async (e) => await ViewModel.UpdateSelectedOption())"></MatTextField></td>
+                        <td><MatTextField @bind-Value="context.OptionName" @onfocusout="@( async (e) => await ViewModel.UpdateSelectedOption())"></MatTextField></td>
+                        <td><MatTextField @bind-Value="context.IntegerValue" @onfocusout="@( async (e) => await ViewModel.UpdateSelectedOption())"></MatTextField></td>
+                    </MatTableRow>
+                </MatTable>
+                *@
+            }
+
+
+
+
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+
+
+@*
+<h3>Value List Editor</h3>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="d-inline-flex justify-content-start align-items-center p-2"><MatButton Label="Add New List" Raised="true" Icon="@MatIconNames.Add" OnClick="@( () => ViewModel.AddNewListClick())"></MatButton></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <MatTable Items="@ViewModel.OptionLists" FilterByColumnName="ListName" DebounceMilliseconds="150" SearchTermFieldPlaceHolder="List Name" Striped="true" class="mat-elevation-z5" AllowSelection="true" SelectionChanged="@( async (ol) => await ViewModel.SelectList(ol as OptionList) )">
+                <MatTableHeader>
+                    <th><div style="width: 200px">Name</div></th>
+                    <th>Description</th>
+                </MatTableHeader>
+                <MatTableRow>
+                    <td>@context.ListName</td>
+                    <td>@context.Description</td>
+                </MatTableRow>
+            </MatTable>
+            <MatDivider></MatDivider>
+        </div>
+    </div>
+
+    <div class="row">
+        @if (ViewModel.SelectedOptionList != null)
+        {
+            <div class="col-1 p-2 align-self-center">
+                <MatSlideToggle Label="@(UnlockNameEdit? "Edit Enabled" : "Edit Locked")" @bind-Value="@UnlockNameEdit"></MatSlideToggle>
+            </div>
+            <div class="col-3 p-1">
+                <MatTextField Label="List Name" @bind-Value="ViewModel.SelectedOptionList.ListName" FullWidth="true" ReadOnly="@(!UnlockNameEdit)" @onfocusout="@(async () => await ViewModel.UpdateSelectedOptionList())"></MatTextField>
+            </div>
+            <div class="col p-1">
+                <MatTextField Label="Description" @bind-Value="ViewModel.SelectedOptionList.Description" FullWidth="true" ReadOnly="@(!UnlockNameEdit)" @onfocusout="@(async () => await ViewModel.UpdateSelectedOptionList())"></MatTextField>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex"><MatH5>Select A List Above...</MatH5></div>
+        }
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <MatButton Label="Add New Option" Raised="true" Icon="@MatIconNames.Add" OnClick="@(async () => await ViewModel.AddNewOptionClick())"></MatButton>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            @if (ViewModel.SelectedOptionList?.Options != null)
+            {
+                <MatTable Items="@ViewModel.SelectedOptionList.Options" Striped="true" class="mat-elevation-z5" AllowSelection="true" SelectionChanged="@( (o) => ViewModel.SelectOption(o as Option))">
+                    <MatTableHeader>
+                        <th>Order</th>
+                        <th><div style="width:300px">Option Name</div></th>
+                        <th>(Numerical Value(Integer))</th>
+                        <th></th>
+                    </MatTableHeader>
+                    <MatTableRow>
+                        <td><MatTextField @bind-Value="context.SortOrder" @onfocusout="@( async (e) => await ViewModel.UpdateSelectedOption())"></MatTextField></td>
+                        <td><MatTextField @bind-Value="context.OptionName" @onfocusout="@( async (e) => await ViewModel.UpdateSelectedOption())"></MatTextField></td>
+                        <td><MatTextField @bind-Value="context.IntegerValue" @onfocusout="@( async (e) => await ViewModel.UpdateSelectedOption())"></MatTextField></td>
+                    </MatTableRow>
+                </MatTable>
+
+            }
+        </div>
+    </div>
+</div>
+*@
+
+@code {
+
+    bool dense = false;
+    bool hover = true;
+    string search_string = "";
+
+    /*
+    bool FilterFunc(Element element)
+    {
+        if (string.IsNullOrWhiteSpace(search_string))
+            return true;
+        if (element.Sign.Contains(search_string))
+            return true;
+        if (element.Name.Contains(search_string))
+            return true;
+        if ($"{element.Number} {element.Position} {element.Molar}".Contains(search_string))
+            return true;
+        return false;
+    }
+    */
+
+
+
+
+
+    public bool UnlockNameEdit { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ViewModel.PropertyChanged += async (sender, e) =>
+        {
+            await InvokeAsync(() =>
+            {
+                StateHasChanged();
+            });
+        };
+
+        //ViewModel snackMessage
+        ViewModel.ShowMessage += (sender, e) => Snackbar.Add(e.Text, (MudBlazor.Severity)e.Type);
+
+
+        await ViewModel.LoadLists();
+
+        await base.OnInitializedAsync();
+    }
+
+
+    async void OnPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
+    {
+        await InvokeAsync(() =>
+        {
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        ViewModel.PropertyChanged -= OnPropertyChangedHandler;
+        //ViewModel.ShowMessage -=
+        //ViewModel.Base
+    }
+
+
+}
+
+

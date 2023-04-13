@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using Dapper.Contrib.Extensions;
 
@@ -22,6 +23,12 @@ namespace DapperIdentity.Models
         public string LastName { get; set; }
         public string SecurityStamp { get; set; }
         public bool IsEnabled { get; set; }
+
+        public CustomIdentityUser()
+        {
+            Id = Guid.NewGuid().ToString();
+            SecurityStamp = Guid.NewGuid().ToString();
+        }
 
         [Write(false)]
         public List<CustomIdentityRole> Roles { get; set; }

@@ -10,12 +10,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
-using IdentityRole = DapperIdentity.Models.CustomIdentityRole;
-using IdentityUser = DapperIdentity.Models.CustomIdentityUser;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using DapperIdentity.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity.UI.Services;
+
+using IdentityRole = DapperIdentity.Models.CustomIdentityRole;
+using IdentityUser = DapperIdentity.Models.CustomIdentityUser;
 
 namespace DapperIdentity.Services
 {
@@ -40,9 +41,9 @@ namespace DapperIdentity.Services
             */
 
             var assembly = typeof(IdentityController).GetTypeInfo().Assembly;
-            var part = new AssemblyPart(assembly);
+            var part = new AssemblyPart(assembly);            
             services.AddMvcCore().AddControllersAsServices().AddApplicationPart(assembly);// ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(part));
-
+            //services.AddControllers().AddControllersAsServices();
             return services;
         }
 
@@ -103,7 +104,7 @@ namespace DapperIdentity.Services
                                                                          bool requireConfirmedEmail = true,
                                                                          bool slidingExpiration = true) where T : IDbConnection
         {
-            services.AddDbConnectionInstantiatorForRepositories<T>(connectionString);
+            //services.AddDbConnectionInstantiatorForRepositories<T>(connectionString);
             return services.AddDapperIdentityWithCustomCookies(cookieExpiration, requireConfirmedEmail, slidingExpiration);
         }
 
@@ -127,7 +128,7 @@ namespace DapperIdentity.Services
                 .AddDefaultTokenProviders()
                 .AddSignInManager<CustomSignInManager>()
                 .AddRoleStore<RoleStore>()
-                .AddUserStore<UserStore>(); //m,aybe deleet?
+                .AddUserStore<UserStore>(); //maybe deleet?
             services.Configure<IdentityOptions>(opts =>
             {
                 opts.SignIn.RequireConfirmedEmail = requireConfirmedEmail;

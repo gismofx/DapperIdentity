@@ -9,7 +9,7 @@ using IdentityRole = DapperIdentity.Models.CustomIdentityRole;
 
 namespace DapperIdentity.Stores
 {
-    public class RoleStore : IRoleStore<IdentityRole>
+    public class RoleStore : IRoleStore<IdentityRole>, IQueryableRoleStore<IdentityRole>
     {
         private IRepository<IdentityRole> repository;
 
@@ -17,6 +17,8 @@ namespace DapperIdentity.Stores
         {
             repository = roleRepository; // new Repository<IdentityRole>(_connectionString);//(_connectionString);
         }
+
+        public IQueryable<Models.CustomIdentityRole> Roles => repository.FindAllAsync().Result.AsQueryable();
 
         public async Task<IdentityResult> CreateAsync(IdentityRole role, CancellationToken cancellationToken)
         {
