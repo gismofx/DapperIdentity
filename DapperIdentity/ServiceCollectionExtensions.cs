@@ -12,11 +12,13 @@ using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using DapperIdentity.Helpers;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity.UI.Services;
+//using Microsoft.AspNetCore.Authentication;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Identity.UI.Services;
 
 using IdentityRole = DapperIdentity.Models.CustomIdentityRole;
 using IdentityUser = DapperIdentity.Models.CustomIdentityUser;
+using DapperIdentity.Controllers.JWT;
 
 namespace DapperIdentity.Services
 {
@@ -44,6 +46,55 @@ namespace DapperIdentity.Services
             var part = new AssemblyPart(assembly);            
             services.AddMvcCore().AddControllersAsServices().AddApplicationPart(assembly);// ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(part));
             //services.AddControllers().AddControllersAsServices();
+            return services;
+        }
+
+        public static IServiceCollection AddJWTIdentity(this IServiceCollection services)
+        {
+            services.TryAddDapperIdentityDatabaseStores();
+            var assembly = typeof(JWTAuthController).GetTypeInfo().Assembly;
+            var part = new AssemblyPart(assembly);
+            services.AddMvcCore().AddControllersAsServices().AddApplicationPart(assembly);
+            services.AddScoped<TokenService>();
+            services.AddIdentity<IdentityUser,IdentityRole>(
+             options =>
+             {
+                 options.SignIn.RequireConfirmedAccount = false;
+                 options.User.RequireUniqueEmail = true;
+                 options.Password.RequireDigit = false;
+                 options.Password.RequiredLength = 6;
+                 options.Password.RequireNonAlphanumeric = false;
+                 options.Password.RequireUppercase = false;
+             });
+
+            //Microsoft.AspNetCore.Authentication.JwtBearer.
+            /*
+            services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.Jw JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+    .AddJwtBearer(options =>
+    {
+        options.IncludeErrorDetails = true;
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ClockSkew = TimeSpan.Zero,
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = validIssuer,
+            ValidAudience = validAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(symmetricSecurityKey)
+            ),
+        };
+    });
+            */
+
+
+
             return services;
         }
 
@@ -185,7 +236,7 @@ namespace DapperIdentity.Services
             services.TryAddDapperIdentityDatabaseStores();
 
             services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddDefaultUI()
+                //.AddDefaultUI()
                 .AddDefaultTokenProviders();
 
             services.Configure<IdentityOptions>(opts =>
@@ -224,7 +275,7 @@ namespace DapperIdentity.Services
             services.AddTransient<IRoleStore<IdentityRole>, RoleStore>();
 
             services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddDefaultUI()
+                //.AddDefaultUI()
                 .AddDefaultTokenProviders();
 
 
