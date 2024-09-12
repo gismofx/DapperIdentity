@@ -9,8 +9,8 @@ using System.Threading;
 using Dapper.Contrib.Extensions;
 using Dapper;
 using DapperRepository;
-using IdentityUser = DapperIdentity.Models.CustomIdentityUser;
-using IdentityRole = DapperIdentity.Models.CustomIdentityRole;
+using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
 
 
 namespace DapperIdentity.Stores

@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DapperRepository;
-using IdentityRole = DapperIdentity.Models.CustomIdentityRole;
+using DapperIdentity.Core;
+using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
+
 
 namespace DapperIdentity.Stores
 {
@@ -18,7 +20,7 @@ namespace DapperIdentity.Stores
             repository = roleRepository; // new Repository<IdentityRole>(_connectionString);//(_connectionString);
         }
 
-        public IQueryable<Models.CustomIdentityRole> Roles => repository.FindAllAsync().Result.AsQueryable();
+        public IQueryable<IdentityRole> Roles => repository.FindAllAsync().Result.AsQueryable();
 
         public async Task<IdentityResult> CreateAsync(IdentityRole role, CancellationToken cancellationToken)
         {
