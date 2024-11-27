@@ -66,11 +66,12 @@ public class TokenService
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),//user is the "subject" so we store userid here
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iss, _JwtSettings.ValidIssuer), 
+                new Claim(JwtRegisteredClaimNames.Iss, _JwtSettings.ValidIssuer),
                 new Claim(JwtRegisteredClaimNames.Aud, _JwtSettings.ValidAudience),
                 //new Claim(ClaimTypes.NameIdentifier, user.Id),//username does not work when enables.
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim("UserId",user.Id)
             };
 
             foreach (var role in usersRoles)

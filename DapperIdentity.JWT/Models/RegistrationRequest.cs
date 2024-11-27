@@ -12,6 +12,7 @@ namespace DapperIdentity.JWT.Models;
 public class RegistrationRequest
 {
     [Required]
+    [EmailAddress]
     public string? Email { get; set; }
 
     [Required]
@@ -19,6 +20,10 @@ public class RegistrationRequest
 
     [Required]
     public string? Password { get; set; }
+
+    public string FirstName { get; set; }
+
+    public string LastName { get; set; }
 
     public string? Id { get; set; }
     

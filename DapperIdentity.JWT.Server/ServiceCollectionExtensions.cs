@@ -57,7 +57,9 @@ public static class ServiceCollectionExtensions
          })
         .AddSignInManager<CustomSignInManager>()
         .AddRoleStore<RoleStore>()
-        .AddUserStore<UserStore>();
+        .AddUserStore<UserStore>()
+        .AddDefaultTokenProviders(); 
+        
 
         //Microsoft.AspNetCore.Authentication.JwtBearer.
 

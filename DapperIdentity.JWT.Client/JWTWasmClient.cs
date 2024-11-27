@@ -86,6 +86,19 @@ public class JWTWasmClient
         return result;
     }
 
+    public async Task<bool> ForgotPassword(string userName)
+    {
+        var result = await _JWTAuthClient.ForgotPassword(userName);// ForgotPassword
+        return result;
+    }
+
+    public async Task<bool> ResetPassword(string userName, string password, string code)
+    {
+        return await _JWTAuthClient.ResetPassword(userName, password, code);
+    }
+
+
+
     private async Task SetLocalStorage(AuthResponse authResponse)
     {
         await _LocalStorage.SetItemAsync("authToken", authResponse.Token);

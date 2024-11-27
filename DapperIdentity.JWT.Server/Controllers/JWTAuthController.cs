@@ -15,6 +15,14 @@ using DapperIdentity.JWT.Models;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Identity.Data;
+using ForgotPasswordRequest = DapperIdentity.JWT.Models.ForgotPasswordRequest;
+using ResetPasswordRequest = DapperIdentity.JWT.Models.ResetPasswordRequest;
+using Microsoft.AspNetCore.Http;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 
@@ -31,10 +39,16 @@ public class JWTAuthController : ControllerBase
     //private readonly ApplicationDbContext _context;
     private readonly TokenService _tokenService;
 
-    public JWTAuthController(UserManager<IdentityUser> userManager, TokenService tokenService, ILogger<JWTAuthController> logger) //ApplicationDbContext context
+    private readonly IEmailSender _EmailSender;
+
+    public JWTAuthController(UserManager<IdentityUser> userManager,
+                             TokenService tokenService,
+                             IEmailSender emailSender,
+                             ILogger<JWTAuthController> logger) //ApplicationDbContext context
     {
         _userManager = userManager;
         //_context = context;
+        _EmailSender = emailSender;
         _tokenService = tokenService;
     }
 
@@ -68,6 +82,103 @@ public class JWTAuthController : ControllerBase
 
         return BadRequest(ModelState);
     }
+
+
+
+    [AllowAnonymous]
+    [HttpPost]
+    [Route("Forgot")]
+    [Route("ForgotPassword")]
+    public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordRequest forgotPasswordRequest)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
+        var user = await _userManager.FindByEmailAsync(forgotPasswordRequest.Email);
+        if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+        {
+            // Don't reveal that the user does not exist or is not confirmed
+            return Ok();
+            return RedirectToPage("./ForgotPasswordConfirmation");
+        }
+
+        var referrer = HttpContext.Request.Headers.Referer;
+
+        // For more information on how to enable account confirmation and password reset please 
+        // visit https://go.microsoft.com/fwlink/?LinkID=532713
+        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+        var callbackUrl = QueryHelpers.AddQueryString($"{referrer}Account/PasswordReset", "code", code);
+
+       
+        //Send Email With Callback URL to reset the password
+        await _EmailSender.SendEmailAsync(
+            forgotPasswordRequest.Email,
+            "Reset Password",
+            $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+        return Ok();
+
+        //return RedirectToPage("./ForgotPasswordConfirmation");
+        
+
+
+
+    }
+
+    [AllowAnonymous]
+    [HttpPost]
+    [Route("ResetPassword")]
+    public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordRequest passwordResetRequest)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var user = await _userManager.FindByEmailAsync(passwordResetRequest.Email);
+        if (user == null)
+        {
+            // Don't reveal that the user does not exist
+            return RedirectToPage("./ResetPasswordConfirmation");
+        }
+
+        var codeB = WebEncoders.Base64UrlDecode(passwordResetRequest.Code);
+        //WebEncoders.
+        //var code = string decodedString = Convert.FromBase64String(Code);
+        var code = Encoding.UTF8.GetString(codeB);
+
+        var result = await _userManager.ResetPasswordAsync(user, code, passwordResetRequest.Password);
+        if (result.Succeeded)
+        {
+            return Ok("Password Reset Successful");
+            //return RedirectToPage("./ResetPasswordConfirmation");
+        }
+
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+        return BadRequest(ModelState); 
+    }
+
+    //public IActionResult OnGet(string code = null)
+    //{
+    //    if (code == null)
+    //    {
+    //        return BadRequest("A code must be supplied for password reset.");
+    //    }
+    //    else
+    //    {
+    //        Input = new InputModel
+    //        {
+    //            Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
+    //        };
+    //        return Page();
+    //    }
+    //}
+    // }
+
 
     [AllowAnonymous]
     [HttpPost]
