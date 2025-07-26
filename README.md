@@ -12,6 +12,76 @@ https://github.com/gismofx/DapperRepository and also on NuGet: https://www.nuget
 More Examples coming soon.
 
 ## Getting Started
+
+### JWT Auth Tokens
+In your API project Add the entries to secrets.json/AppSettings.json whatever app secrests store you use:
+```json
+  "JwtTokenSettings": {
+    "ValidIssuer": "ExampleIssuer",
+    "ValidAudience": "ValidAudience",
+    "SymmetricSecurityKey": "my_super_secret_key",
+    "JwtExpireSeconds": 900,
+    "RefreshTokenLifeDays": 4
+  }
+```
+In `program.cs` Add the following:
+```c#
+  builder.Services.AddIAppSettings(new MyAppSettings()); //Create a class that implements IAppSettings
+  builder.Services.AddDbConnectionInstantiatorForRepositories<MySqlConnection>(conStrBuilder.GetConnectionString(true)); //eg
+  builder.Services.AddJWTIdentity(builder.Configuration);
+
+  builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+```
+
+In your controller decorate your endpoints with `[Authorize]` per MS docs
+```c#
+    [Authorize]
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<Client>> Get(string id)
+    {
+        return Ok(await ClientRepository.FindByIDAsync(id));
+    }
+
+
+    [Authorize(Roles = "Admin,UsersEdit")]
+    [HttpGet("getuser\{userId}")]
+    public async Task<ActionResult<ApplicationUser>> Get(string userId)
+    {
+        var user = (await GetUsersWithRoles(userId:userId)).First();
+        return Ok(user);
+    }
+
+```
+
+On the client-side(if you're using C#/Blazor):
+```c#
+@inject JWTWasmClient AuthClient
+
+@code {
+ private async Task LoginClick()
+ {
+     var response = await AuthClient.Login(new() { Email = userName, Password = password }, ((AuthStateProvider)authStateProvider).NotifyUserAuthentication);
+ 
+     if (!string.IsNullOrWhiteSpace(response.Token))
+     {
+         navManager.NavigateTo(@"\");
+         await AppState.LoadCurrentUser(true);
+     }
+     else
+     {
+         Snackbar.Add(new MarkupString("There was an error logging in. Bad login info or internet may be disconnected. Try again later"), Severity.Error);
+     }
+ }
+}
+```
+
+
+
+##
+
+
+### Blazor Server with Cookie Auth
 In `startup.cs` add the following
 ```c#
 using DapperIdentity.Services;
