@@ -12,8 +12,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using IdentityRole = DapperIdentity.Models.CustomIdentityRole;
-using IdentityUser = DapperIdentity.Models.CustomIdentityUser;
+using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
+using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
 
 namespace DapperIdentity.Helpers
     {

@@ -9,8 +9,11 @@ using System.Threading;
 using Dapper.Contrib.Extensions;
 using Dapper;
 using DapperRepository;
-using IdentityUser = DapperIdentity.Models.CustomIdentityUser;
-using IdentityRole = DapperIdentity.Models.CustomIdentityRole;
+using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
+using IdentityUserClaim = DapperIdentity.Core.Models.CustomIdentityUserClaim;
+using System.Security.Claims;
+using DapperIdentity.Core.Models;
 
 
 namespace DapperIdentity.Stores
@@ -22,17 +25,23 @@ namespace DapperIdentity.Stores
                              IUserPhoneNumberStore<IdentityUser>,
                              IUserRoleStore<IdentityUser>,
                              IQueryableUserStore<IdentityUser>,
-                             IUserSecurityStampStore<IdentityUser>
-                             //IUserClaimStore
+                             IUserSecurityStampStore<IdentityUser>,
+                             IUserClaimStore<IdentityUser>
                              //IUserTwoFactorStore<>,
                              //IUserLockoutStore<>
                             
     {
-        private IRepository<IdentityUser> repository;
+        private IRepository<IdentityUser> _IdentityUserRepository;
+        private IRepository<IdentityUserClaim> _IdentityUserClaimRepository;
 
-        public UserStore(IRepository<IdentityUser> userRepository)
+        //public UserStore(IRepository<IdentityUser> userRepository)
+        //{
+            
+        //}
+        public UserStore(IRepository<IdentityUser> userRepository, IRepository<IdentityUserClaim> claimRepository)
         {
-            repository = userRepository;
+            _IdentityUserRepository = userRepository;
+            _IdentityUserClaimRepository = claimRepository;
         }
 
         IQueryable<IdentityUser> IQueryableUserStore<IdentityUser>.Users => this.GetUsers().Result; //repository.FindAllAsync().Result.AsQueryable();
@@ -41,7 +50,7 @@ namespace DapperIdentity.Stores
         {
             var userDictionary = new Dictionary<string, IdentityUser>();
 
-            using (var connection = repository.DbConnection)
+            using (var connection = _IdentityUserRepository.DbConnection)
             {
                 var sql = @"SELECT * FROM IdentityUser as U LEFT JOIN IdentityRole as R ON U.Id=R.Id";
                 var list = await connection.QueryAsync<IdentityUser, IdentityRole, IdentityUser>(
@@ -78,7 +87,7 @@ namespace DapperIdentity.Stores
             {
                 user.Id = Guid.NewGuid().ToString();
             }
-            var something = await repository.InsertAsync(user); // InsertAsync(user);
+            var something = await _IdentityUserRepository.InsertAsync(user); // InsertAsync(user);
             
             return IdentityResult.Success;
         }
@@ -99,7 +108,7 @@ namespace DapperIdentity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             
-            await repository.DeleteAsync(user);
+            await _IdentityUserRepository.DeleteAsync(user);
             return IdentityResult.Success;
 
         }
@@ -118,12 +127,12 @@ namespace DapperIdentity.Stores
             var dynamicParams = new DynamicParameters();
             dynamicParams.Add("NormalizedEmail", normalizedEmail, System.Data.DbType.String);
             string sql = @"SELECT * FROM IdentityUser WHERE NormalizedEmail = @NormalizedEmail";
-                        return await repository.SelectFirstOrDefaultAsync(sql, dynamicParams);
+                        return await _IdentityUserRepository.SelectFirstOrDefaultAsync(sql, dynamicParams);
         }
 
         public async Task<IdentityUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
-            return await repository.FindByIDAsync(userId);
+            return await _IdentityUserRepository.FindByIDAsync(userId);
         }
 
         public Task<IdentityUser> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken)
@@ -135,7 +144,7 @@ namespace DapperIdentity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             IdentityUser foundUser;
-            using (var conn = repository.DbConnection)
+            using (var conn = _IdentityUserRepository.DbConnection)
             { 
                 var dynamicParams = new DynamicParameters();
                 dynamicParams.Add("UserName", normalizedUserName, System.Data.DbType.String);
@@ -192,10 +201,6 @@ namespace DapperIdentity.Stores
             //throw new NotImplementedException();
         }
 
-        //public Task<string> GetUserIdAsync(IdentityUser user, CancellationToken cancellationToken)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         public Task<string> GetUserNameAsync(IdentityUser user, CancellationToken cancellationToken)
         {
@@ -264,7 +269,7 @@ namespace DapperIdentity.Stores
         public async Task<IdentityResult> UpdateAsync(IdentityUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await repository.UpdateAsync(user);
+            await _IdentityUserRepository.UpdateAsync(user);
             return IdentityResult.Success;
         }
 
@@ -278,7 +283,7 @@ namespace DapperIdentity.Stores
             string sql = "SELECT Name FROM IdentityRole WHERE id = @id";
             var dynamicParams = new DynamicParameters();
             dynamicParams.Add("id", user.Id, System.Data.DbType.String);
-            var result = await repository.DbConnection.QueryAsync<string>(sql, dynamicParams);
+            var result = await _IdentityUserRepository.DbConnection.QueryAsync<string>(sql, dynamicParams);
             return result.ToList<string>();
         }
 
@@ -330,6 +335,59 @@ namespace DapperIdentity.Stores
             return Task.FromResult(user.SecurityStamp);
         }
 
+        #region User Claims Region
+        public async Task<IList<Claim>> GetClaimsAsync(CustomIdentityUser user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var sql = "SELECT * from IdentityUserClaim Where UserId = @userId";
+            
+            var dynamicParams = new DynamicParameters();
+            dynamicParams.Add("@userId", user.Id);
+            
+            var result = (await _IdentityUserRepository.DbConnection.QueryAsync<IdentityUserClaim>(sql, dynamicParams)).ToList();
+            
+            var claims = new List<Claim>();
+            
+            result.ForEach(x => claims.Add(x.ToClaim()));
+            return claims;
+        }
+
+        public async Task AddClaimsAsync(CustomIdentityUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var idClaims = new List<IdentityUserClaim>();
+            foreach (var claim in claims)
+            {
+                var idc = new IdentityUserClaim(){ Id = Guid.NewGuid().ToString(), UserId = user.Id,  ClaimType = claim.Type, ClaimValue = claim.Value };
+                idClaims.Add(idc);
+            }
+            await _IdentityUserClaimRepository.InsertAsync(idClaims);
+
+        }
+
+        public Task ReplaceClaimAsync(CustomIdentityUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task RemoveClaimsAsync(CustomIdentityUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            var sql = @"DELETE FROM IdentityUserClaim where ClaimType = @claimType AND ClaimValue=@claimValue and UserId = @userId";
+
+            var dynamicParams = new DynamicParameters();
+            dynamicParams.Add("@userId", user.Id);
+            dynamicParams.Add("@claimType", claims);
+            //using (var conn = MyRepository.DbConnection)
+            //{
+            //}
+
+        }
+
+        public Task<IList<CustomIdentityUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         //public async Task<IdentityResult> CreateAsync(IdentityUser user, CancellationToken cancellationToken)
         //{

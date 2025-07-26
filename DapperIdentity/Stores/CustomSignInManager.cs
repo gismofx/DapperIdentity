@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IdentityUser = DapperIdentity.Models.CustomIdentityUser;
+using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
 
 
 namespace DapperIdentity.Stores

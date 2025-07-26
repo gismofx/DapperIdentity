@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DapperIdentity.Models
+namespace DapperIdentity.Core.Models
 {
     public class JwtSettings
     {

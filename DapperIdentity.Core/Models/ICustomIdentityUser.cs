@@ -1,14 +1,13 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using Dapper.Contrib.Extensions;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace DapperIdentity.Models
+namespace DapperIdentity.Core.Models
 {
-    [Table("IdentityUser")]
-    public class CustomIdentityUser : ICustomIdentityUser
+    public interface ICustomIdentityUser
     {
-        [ExplicitKey]
         public string Id { get; set; }
         public string UserName { get; set; }
         public string NormalizedUserName { get; set; }
@@ -23,21 +22,7 @@ namespace DapperIdentity.Models
         public string LastName { get; set; }
         public string SecurityStamp { get; set; }
         public bool IsEnabled { get; set; }
-
-        public CustomIdentityUser()
-        {
-            Id = Guid.NewGuid().ToString();
-            SecurityStamp = Guid.NewGuid().ToString();
-        }
-
-        [Write(false)]
-        public List<CustomIdentityRole> Roles { get; set; }
-
-        /// <summary>
-        /// Used in UI to Hide/Show Roles in expansion panel for each user
-        /// </summary>
-        [Write(false)]
-        public bool ShowRoles { get; set; } = false;
-
+        public string RefreshToken { get; set; }
+        public DateTime RefreshTokenExpireTime { get; set; }
     }
 }

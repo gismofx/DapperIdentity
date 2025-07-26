@@ -8,18 +8,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
-using IdentityUser = DapperIdentity.Models.CustomIdentityUser;
-using Microsoft.AspNetCore.Http;
+using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
 
 //ref https://codeburst.io/adding-basic-authentication-to-an-asp-net-core-web-api-project-5439c4cf78ee
 
-namespace DapperIdentity.Controllers.BasicAuth
+namespace DapperIdentity.Cookies.Server.Controllers.DigestAuth
 {
-    public class BasicAuthFilter : IAsyncAuthorizationFilter
+    public class DigestAuthFilter : IAsyncAuthorizationFilter
     {
         private readonly string _realm;
 
-        public BasicAuthFilter(string realm)
+        public DigestAuthFilter(string realm)
         {
             _realm = realm;
             if (string.IsNullOrWhiteSpace(_realm))
@@ -69,11 +68,10 @@ namespace DapperIdentity.Controllers.BasicAuth
             {
                 return false;
             }
-            var result = await signinService.PasswordSignInAsync(user, password,isPersistent:false, lockoutOnFailure: false);
+            var result = await signinService.CheckPasswordSignInAsync(user, password,lockoutOnFailure: false);
             if (result.Succeeded)
             {
-                //we do this for basic auth.. there is no cookie and refresh. login right away.
-                context.HttpContext.User = await signinService.CreateUserPrincipalAsync(user);
+                await signinService.SignInAsync(user, isPersistent: false);
             }
             return result.Succeeded;
         }
