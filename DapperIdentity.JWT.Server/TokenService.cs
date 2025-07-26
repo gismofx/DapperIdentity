@@ -211,7 +211,7 @@ public class TokenService
 
         public string SymmetricSecurityKey => _Configuration["SymmetricSecurityKey"]!;
 
-        public string JwtRegisteredClaimNamesSub => _Configuration["JwtRegisteredClaimNamesSub"]!;
+        //public string JwtRegisteredClaimNamesSub => _Configuration["JwtRegisteredClaimNamesSub"]!;
 
         public TimeSpan ExpirationTime => TimeSpan.FromSeconds(double.Parse(_Configuration["JwtExpireSeconds"]!));
 

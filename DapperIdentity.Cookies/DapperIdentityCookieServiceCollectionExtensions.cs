@@ -1,52 +1,20 @@
-﻿using System;
-using System.Reflection;
-using DapperIdentity.Cookies.Server.Controllers;
-using DapperIdentity.Cookies.Server.Controllers.BasicAuth;
+﻿using DapperIdentity.Cookies.Server.Controllers;
+using DapperIdentity.Services;
 using DapperIdentity.Stores;
-using System.Data;
 using DapperRepository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using DapperIdentity.Helpers;
-//using Microsoft.AspNetCore.Authentication;
-//using Microsoft.AspNetCore.Authentication.JwtBearer;
-//using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-
+using System.Data;
+using System.Reflection;
 using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
 using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
-using Microsoft.IdentityModel.Tokens;
-using DapperIdentity.Services;
 
 namespace DapperIdentity.Cookies.Server.Services;
 public static class DapperIdentityCookieServiceCollectionExtensions
 {
-
-    /// <summary>
-    /// Private Extension To Add The Stores and Database Repositories
-    /// </summary>
-    /// <param name="services"></param>
-    /// <returns></returns>
-    //public static IServiceCollection TryAddDapperIdentityDatabaseStores(this IServiceCollection services)
-    //{
-    //    services.AddTransientRepository<IdentityUser>();
-    //    services.AddTransientRepository<IdentityRole>();
-    //    //services.TryAddTransient(typeof(IRepository<IdentityUser>), typeof(Repository<IdentityUser>));
-    //    //services.TryAddTransient(typeof(IRepository<IdentityRole>), typeof(Repository<IdentityRole>));
-
-    //    services.TryAddTransient<IUserStore<IdentityUser>, UserStore>();
-    //    services.TryAddTransient<IRoleStore<IdentityRole>, RoleStore>();
-    //    //services.TryAddTransient<UserStore>();
-    //    //, IdentityRole>();
-    //    return services;
-    //}
-
-
-
 
     /// <summary>
     /// Added because docs say so, but this is NOT required. Maybe because some magic in blazor project? or Net 5?
@@ -55,19 +23,8 @@ public static class DapperIdentityCookieServiceCollectionExtensions
     /// <returns></returns>
     public static IServiceCollection AddIdentityControllers(this IServiceCollection services)
     {
-        /*
-        var assembly = typeof(IdentityController).Assembly;
-        services.AddControllersWithViews()
-            .AddApplicationPart(assembly)
-            .AddRazorRuntimeCompilation();
-        services.Configure<MvcRazorRuntimeCompilationOptions>(options =>
-        {
-            options.FileProviders.Add(new EmbeddedFileProvider(assembly));
-        });
-        */
-
         var assembly = typeof(IdentityController).GetTypeInfo().Assembly;
-        var part = new AssemblyPart(assembly);            
+        var part = new AssemblyPart(assembly);
         services.AddMvcCore().AddControllersAsServices().AddApplicationPart(assembly);// ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(part));
         //services.AddControllers().AddControllersAsServices();
         return services;
@@ -82,18 +39,6 @@ public static class DapperIdentityCookieServiceCollectionExtensions
     public static IServiceCollection AddBasicAuthController(this IServiceCollection services)
     {
         services.TryAddDapperIdentityDatabaseStores();
-        
-        //var assembly = typeof(BasicAuthController).GetTypeInfo().Assembly;
-        //var part = new AssemblyPart(assembly);
-        //services.AddMvcCore().AddControllersAsServices().AddApplicationPart(assembly);
-
-        /*services.AddAuthentication("BasicAuthentication")
-            .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
-        */
-
-        // configure DI for application services
-        //services.AddScoped<IUserService, UserService>();
-
         return services;
     }
 
@@ -222,22 +167,4 @@ public static class DapperIdentityCookieServiceCollectionExtensions
 
     }
 
-    //public static IServiceCollection AddDapperIdentityForApi(this IServiceCollection services)
-
-    //{
-    //    services.AddTransientRepository<IdentityUser>();
-    //    services.AddTransientRepository<IdentityRole>();
-
-    //    //authentication/auth
-    //    services.AddTransient<IUserStore<IdentityUser>, UserStore>();
-    //    services.AddTransient<IRoleStore<IdentityRole>, RoleStore>();
-
-    //    services.AddIdentity<IdentityUser, IdentityRole>()
-    //        //.AddDefaultUI()
-    //        .AddDefaultTokenProviders();
-
-
-    //    return services;
-
-    //}
 }
