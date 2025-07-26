@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
 using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Identity;
 //using System.IdentityModel.Tokens.Jwt; Used directly below
 
 namespace DapperIdentity.JWT.Server;
@@ -23,13 +24,18 @@ public class TokenService
 
     private IClaimsService _ClaimsService;
 
+    private IUserClaimStore<IdentityUser> _userClaimStore;
 
 
-    public TokenService(ILogger<TokenService> logger, IConfiguration configuration, IClaimsService claimsService= null)
+    public TokenService(ILogger<TokenService> logger,
+                        IConfiguration configuration,
+                        IUserClaimStore<IdentityUser> claimStore,
+                        IClaimsService claimsService = null)
     {
         _logger = logger;
         _JwtSettings = new JWTSettings(configuration);
         _ClaimsService = claimsService;
+        _userClaimStore = claimStore;
     }
 
     /// <summary>
@@ -86,11 +92,19 @@ public class TokenService
                 claims.AddRange(userClaims);
             }
 
+            if (_userClaimStore is not null)
+            {
+                var userClaims = await _userClaimStore.GetClaimsAsync(user, new CancellationToken());
+                claims.AddRange(userClaims);
+            }
+
+
             return claims;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
+            _logger.LogCritical(e,"Error creating claims");
             throw;
         }
     }

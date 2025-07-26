@@ -19,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using DapperIdentity.Services;
 using DapperIdentity.JWT.Server.Server.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using DapperIdentity.Core.Models;
 
 namespace DapperIdentity.JWT.Server.Services;
 public static class ServiceCollectionExtensions
@@ -91,24 +92,11 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    public static IServiceCollection AddIAppSettings(this IServiceCollection services, IAppSettings appSettings)
+    {
+        services.AddSingleton<IAppSettings>(appSettings);
+        return services;
+    }
 
-    //public static IServiceCollection AddDapperIdentityForApi(this IServiceCollection services)
-
-    //{
-    //    services.AddTransientRepository<IdentityUser>();
-    //    services.AddTransientRepository<IdentityRole>();
-
-    //    //authentication/auth
-    //    services.AddTransient<IUserStore<IdentityUser>, UserStore>();
-    //    services.AddTransient<IRoleStore<IdentityRole>, RoleStore>();
-
-    //    services.AddIdentity<IdentityUser, IdentityRole>()
-    //        //.AddDefaultUI()
-    //        .AddDefaultTokenProviders();
-
-
-    //    return services;
-
-    //}
 
 }

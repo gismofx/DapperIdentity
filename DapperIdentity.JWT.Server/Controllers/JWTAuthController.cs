@@ -1,28 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-
-using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
-using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+﻿using DapperIdentity.Core.Models;
 using DapperIdentity.JWT.Models;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.WebUtilities;
-using System.Text.Encodings.Web;
-using Microsoft.AspNetCore.Identity.Data;
-using ForgotPasswordRequest = DapperIdentity.JWT.Models.ForgotPasswordRequest;
-using ResetPasswordRequest = DapperIdentity.JWT.Models.ResetPasswordRequest;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Encodings.Web;
+using ForgotPasswordRequest = DapperIdentity.JWT.Models.ForgotPasswordRequest;
+using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+using ResetPasswordRequest = DapperIdentity.JWT.Models.ResetPasswordRequest;
+
 
 
 
@@ -41,21 +32,28 @@ public class JWTAuthController : ControllerBase
 
     private readonly IEmailSender _EmailSender;
 
+    private readonly ILogger<JWTAuthController> _logger;
+
+    private readonly IAppSettings _AppSettings;
+
     public JWTAuthController(UserManager<IdentityUser> userManager,
                              TokenService tokenService,
                              IEmailSender emailSender,
-                             ILogger<JWTAuthController> logger) //ApplicationDbContext context
+                             ILogger<JWTAuthController> logger,
+                             IAppSettings appSettings)//Todo: Add options, IOptions<JWTControllerOptions> options) //ApplicationDbContext context
     {
         _userManager = userManager;
         //_context = context;
         _EmailSender = emailSender;
         _tokenService = tokenService;
+        _logger = logger;
+        _AppSettings = appSettings;
     }
 
     [Authorize]
     [HttpPost]
     [Route("register")]
-    public async Task<IActionResult> Register(RegistrationRequest request)
+    public async Task<IActionResult> Register([FromBody] RegistrationRequest request)
     {
         if (!ModelState.IsValid)
         {
@@ -63,7 +61,14 @@ public class JWTAuthController : ControllerBase
         }
 
         var result = await _userManager.CreateAsync(
-            new IdentityUser { UserName = request.Username, Email = request.Email }, //, Role = Role.User },
+            new IdentityUser
+            {
+                UserName = request.Username,
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                IsEnabled = true
+            },
             request.Password!
         );
 
@@ -72,6 +77,19 @@ public class JWTAuthController : ControllerBase
             var user = await _userManager.FindByEmailAsync(request.Email);
             request.Id = user.Id;
             request.Password = "";
+
+            //add claims
+            List<Claim> claims = new List<Claim>();
+            foreach (var item in request.Claims)
+            {
+                claims.Add(new Claim(item.Key, item.Value));
+            }
+            await _userManager.AddClaimsAsync(user, claims);
+
+            //send email
+            await SendRegistrationEmail(user, $"{_AppSettings.ApplicationName}: Welcome! User Registration", $"Welcome! You have been registered to access {_AppSettings.ApplicationName}! Complete your registration by");
+
+            //return
             return CreatedAtAction(nameof(Register), new { email = request.Email,/* role = request.Role */}, request);
         }
 
@@ -83,23 +101,8 @@ public class JWTAuthController : ControllerBase
         return BadRequest(ModelState);
     }
 
-
-
-    [AllowAnonymous]
-    [HttpPost]
-    [Route("Forgot")]
-    [Route("ForgotPassword")]
-    public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordRequest forgotPasswordRequest)
+    private async Task SendRegistrationEmail(IdentityUser user, string subject, string bodyPrefix)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        
-        var user = await _userManager.FindByEmailAsync(forgotPasswordRequest.Email);
-        if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
-        {
-            // Don't reveal that the user does not exist or is not confirmed
-            return Ok();
-            return RedirectToPage("./ForgotPasswordConfirmation");
-        }
 
         var referrer = HttpContext.Request.Headers.Referer;
 
@@ -110,22 +113,55 @@ public class JWTAuthController : ControllerBase
 
         var callbackUrl = QueryHelpers.AddQueryString($"{referrer}Account/PasswordReset", "code", code);
 
-       
         //Send Email With Callback URL to reset the password
         await _EmailSender.SendEmailAsync(
-            forgotPasswordRequest.Email,
-            "Reset Password",
-            $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-        return Ok();
-
-        //return RedirectToPage("./ForgotPasswordConfirmation");
-        
-
-
+            user.Email,
+            subject,
+            $"{bodyPrefix} <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
     }
 
+
+    /// <summary>
+    /// Forgot Password Endpoint To Initiate a Password Reset
+    /// </summary>
+    /// <param name="forgotPasswordRequest"></param>
+    /// <returns></returns>
+    [AllowAnonymous]
+    [HttpPost]
+    [Route("Forgot")]
+    [Route("ForgotPassword")]
+    public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordRequest forgotPasswordRequest)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var user = await _userManager.FindByEmailAsync(forgotPasswordRequest.Email);
+        if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+        {
+            // Don't reveal that the user does not exist or is not confirmed
+            return Ok();
+            return RedirectToPage("./ForgotPasswordConfirmation");
+        }
+
+        try
+        {
+            await SendRegistrationEmail(user, $"{_AppSettings.ApplicationName}: Reset Password", "Please reset your password by");
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in API endpoint 'ForgotPassword'");
+        }
+
+        return Ok();
+
+    }
+
+    /// <summary>
+    /// This endpoints is called to reset the password
+    /// </summary>
+    /// <param name="passwordResetRequest"></param>
+    /// <returns></returns>
     [AllowAnonymous]
     [HttpPost]
     [Route("ResetPassword")]
@@ -144,42 +180,31 @@ public class JWTAuthController : ControllerBase
         }
 
         var codeB = WebEncoders.Base64UrlDecode(passwordResetRequest.Code);
-        //WebEncoders.
-        //var code = string decodedString = Convert.FromBase64String(Code);
+
         var code = Encoding.UTF8.GetString(codeB);
 
         var result = await _userManager.ResetPasswordAsync(user, code, passwordResetRequest.Password);
         if (result.Succeeded)
         {
+            await _EmailSender.SendEmailAsync(passwordResetRequest.Email, "Password Reset Successful", "Your password was successfully reset. If you did not change your password, please contact application administrator.");
             return Ok("Password Reset Successful");
             //return RedirectToPage("./ResetPasswordConfirmation");
         }
 
         foreach (var error in result.Errors)
         {
+            _logger.LogError($"Error in API 'ResetPassword: User:{passwordResetRequest.Email} {error.Code} - {error.Description}");
             ModelState.AddModelError(string.Empty, error.Description);
         }
-        return BadRequest(ModelState); 
+        return BadRequest(ModelState);
     }
 
-    //public IActionResult OnGet(string code = null)
-    //{
-    //    if (code == null)
-    //    {
-    //        return BadRequest("A code must be supplied for password reset.");
-    //    }
-    //    else
-    //    {
-    //        Input = new InputModel
-    //        {
-    //            Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
-    //        };
-    //        return Page();
-    //    }
-    //}
-    // }
 
-
+    /// <summary>
+    /// Login Method
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [AllowAnonymous]
     [HttpPost]
     [Route("login")]
@@ -236,26 +261,26 @@ public class JWTAuthController : ControllerBase
         {
             return BadRequest(ModelState);
         }
-        
+
         /*if (tokenDto is null)
         {
             return BadRequest(new AuthResponseDto { IsAuthSuccessful = false, ErrorMessage = "Invalid client request" });
         }
         */
-        
+
         var principal = _tokenService.GetPrincipalFromExpiredToken2(tokenDto.Token);
         if (principal is null)
         {
             return BadRequest("Invalid access token or refresh token");
         }
 
-        var username = principal.Identity.Name;
+        var username = principal.Identity!.Name; //do we need to null check on Identity?
         var user = await _userManager.FindByNameAsync(username);// EmailAsync(username);
         if (user == null || user.RefreshToken != tokenDto.RefreshToken || user.RefreshTokenExpireTime <= DateTime.Now)
             return BadRequest("Invalid access token or refresh token");//return BadRequest(new AuthResponseDto { IsAuthSuccessful = false, ErrorMessage = "Invalid client request" });
-        
+
         var roles = await _userManager.GetRolesAsync(user);
-        
+
         //Create a new Token
         var token = await _tokenService.CreateToken(user, roles);
 
@@ -265,9 +290,7 @@ public class JWTAuthController : ControllerBase
         user.RefreshTokenExpireTime = tokenInfo.expiration;
         await _userManager.UpdateAsync(user);
 
-        return Ok(new AuthResponse() { Email = user.Email, RefreshToken = user.RefreshToken, Token = token, Username = user.UserName});
+        return Ok(new AuthResponse() { Email = user.Email, RefreshToken = user.RefreshToken, Token = token, Username = user.UserName });
     }
-
-    //public async Task
 
 }

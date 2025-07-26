@@ -17,8 +17,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
 using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+using IdentityUserClaim = DapperIdentity.Core.Models.CustomIdentityUserClaim;
 using Microsoft.IdentityModel.Tokens;
-using DapperIdentity.Stores;
 
 namespace DapperIdentity.Services;
 public static class DapperIdentityServiceCollectionExtensions
@@ -34,13 +34,16 @@ public static class DapperIdentityServiceCollectionExtensions
     {
         services.AddTransientRepository<IdentityUser>();
         services.AddTransientRepository<IdentityRole>();
+        services.AddTransientRepository<IdentityUserClaim>();
+
         //services.TryAddTransient(typeof(IRepository<IdentityUser>), typeof(Repository<IdentityUser>));
         //services.TryAddTransient(typeof(IRepository<IdentityRole>), typeof(Repository<IdentityRole>));
 
         services.TryAddTransient<IUserStore<IdentityUser>, UserStore>();
         services.TryAddTransient<IRoleStore<IdentityRole>, RoleStore>();
-                                              //services.TryAddTransient<UserStore>();
-                                              //, IdentityRole>();
+        services.TryAddTransient<IUserClaimStore<IdentityUser>, UserStore>(); //Is this ok?
+        //services.TryAddTransient<UserStore>();
+        //, IdentityRole>();
 
         /*
          * services.AddSingleton<ServiceClass>();

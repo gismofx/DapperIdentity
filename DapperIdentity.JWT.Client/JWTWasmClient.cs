@@ -38,7 +38,7 @@ public class JWTWasmClient
     }
 
     /// <summary>
-    /// 
+    /// Login Endpoint
     /// </summary>
     /// <param name="userForAuthentication">User/Password Object to Authenticate</param>
     /// <param name="notifyUserAutentication">Method from AuthStateProvider to invoke NotifyUserAuthentication/NotifyAuthenticationStateChanged</param>
@@ -104,8 +104,6 @@ public class JWTWasmClient
         await _LocalStorage.SetItemAsync("authToken", authResponse.Token);
         await _LocalStorage.SetItemAsync("refreshToken", authResponse.RefreshToken);
     }
-
-    //return await _JWTAuthClient.RefreshToken(refreshTokenDto);
 }
 
 
