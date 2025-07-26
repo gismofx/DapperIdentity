@@ -1,25 +1,23 @@
-﻿using System;
-using System.Reflection;
-
-using System.Data;
-using DapperRepository;
+﻿using DapperIdentity.Core.Models;
+using DapperIdentity.JWT.Server.Server.Controllers;
+using DapperIdentity.Services;
+using DapperIdentity.Services;
 using DapperIdentity.Stores;
+using DapperRepository;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using DapperIdentity.Services;
-
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Data;
+using System.Reflection;
 using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
 using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
-
-using Microsoft.IdentityModel.Tokens;
-using DapperIdentity.Services;
-using DapperIdentity.JWT.Server.Server.Controllers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using DapperIdentity.Core.Models;
 
 namespace DapperIdentity.JWT.Server.Services;
 public static class ServiceCollectionExtensions
@@ -33,9 +31,7 @@ public static class ServiceCollectionExtensions
     /// <param name="symmetricSecurityKey"></param>
     /// <returns></returns>
     public static IServiceCollection AddJWTIdentity(this IServiceCollection services,
-                                                string validIssuer,
-                                                string validAudience,
-                                                string symmetricSecurityKey)
+                                                    IConfiguration configuration)
     {
         services.TryAddDapperIdentityDatabaseStores();
         services.AddScoped<TokenService>();
@@ -80,14 +76,15 @@ public static class ServiceCollectionExtensions
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = validIssuer,
-                ValidAudience = validAudience,
+                ValidIssuer = configuration.GetSection("JwtTokenSettings")["ValidIssuer"],
+                ValidAudience = configuration.GetSection("JwtTokenSettings")["ValidAudience"],
                 IssuerSigningKey = new SymmetricSecurityKey(
-                    System.Text.Encoding.UTF8.GetBytes(symmetricSecurityKey)
+                    System.Text.Encoding.UTF8.GetBytes(configuration.GetSection("JwtTokenSettings")["SymmetricSecurityKey"]!)
                 ),
                 
             };
         });
+
 
         return services;
     }
