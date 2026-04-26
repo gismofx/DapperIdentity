@@ -77,7 +77,7 @@ namespace DapperIdentity.JWT.Client
         }
 
         /// <summary>
-        /// Request a refres Token
+        /// Request a refresh Token
         /// </summary>
         /// <param name="refreshObject"></param>
         /// <returns></returns>
@@ -141,16 +141,6 @@ namespace DapperIdentity.JWT.Client
                 {
                     return false;
                 }
-                //var result = JsonSerializer.Deserialize<AuthResponse>(authContent, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }); //, _options);
-                //else
-                //{
-                //    return true;
-                //}
-
-
-                //return new AuthResponseDto { IsAuthSuccessful = true };
-                //return result;
-                //await _localStorage.SetItemAsync("authToken", result.Token);
 
             }
         }

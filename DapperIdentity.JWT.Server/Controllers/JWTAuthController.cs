@@ -139,6 +139,7 @@ public class JWTAuthController : ControllerBase
         if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
         {
             // Don't reveal that the user does not exist or is not confirmed
+            _logger.LogInformation($"'Forgot Password' flow rejected for user: {forgotPasswordRequest.Email}. User is not found or email is not confirmed.");
             return Ok();
             return RedirectToPage("./ForgotPasswordConfirmation");
         }
