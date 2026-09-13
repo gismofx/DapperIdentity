@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 
-namespace DapperIdentity.JWT.Models
+namespace CPE.DapperIdentity.JWT.Models
 {
     public class ForgotPasswordRequest
     {

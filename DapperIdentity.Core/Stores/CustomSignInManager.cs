@@ -8,10 +8,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+using IdentityUser = CPE.DapperIdentity.Core.Models.CustomIdentityUser;
 
 
-namespace DapperIdentity.Stores
+namespace CPE.DapperIdentity.Stores
 {
     public class CustomSignInManager : SignInManager<IdentityUser> 
     {

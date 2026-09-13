@@ -9,14 +9,14 @@ using System.Threading;
 using Dapper.Contrib.Extensions;
 using Dapper;
 using DapperRepository;
-using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
-using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
-using IdentityUserClaim = DapperIdentity.Core.Models.CustomIdentityUserClaim;
+using IdentityUser = CPE.DapperIdentity.Core.Models.CustomIdentityUser;
+using IdentityRole = CPE.DapperIdentity.Core.Models.CustomIdentityRole;
+using IdentityUserClaim = CPE.DapperIdentity.Core.Models.CustomIdentityUserClaim;
 using System.Security.Claims;
-using DapperIdentity.Core.Models;
+using CPE.DapperIdentity.Core.Models;
 
 
-namespace DapperIdentity.Stores
+namespace CPE.DapperIdentity.Stores
 {
     public class UserStore : IUserStore<IdentityUser>,
                              IUserEmailStore<IdentityUser>,

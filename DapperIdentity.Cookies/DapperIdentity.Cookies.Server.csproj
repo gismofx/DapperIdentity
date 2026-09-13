@@ -1,18 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- Single-targeted deliberately: this project is NOT one of the four packages (D-050), so it
+         is kept building rather than shipped. The 2.x removal below is not cosmetic - leaving it
+         in the solution keeps the framework-shadowing hazard alive for anyone who builds here. -->
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!-- The namespaces carry the CPE. prefix (D-051) while the project file does not, so
+         RootNamespace has to be stated - otherwise it defaults to the project name and every new
+         file lands in the old namespace. -->
+    <RootNamespace>CPE.DapperIdentity.Cookies.Server</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.3.9" />
+    <!-- Mvc.Core 2.3.9 and Mvc.ViewFeatures 2.3.9 removed 2026-09-13: ASP.NET Core *2.1* packages
+         shadowing the shared framework (technical-spec 9o). -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Newtonsoft.Json and System.Text.RegularExpressions 4.3.1 removed 2026-09-13: no usage
+         anywhere in the repo. -->
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.18.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Text.Encodings.Web" Version="9.0.4" />
-    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
 
   <ItemGroup>

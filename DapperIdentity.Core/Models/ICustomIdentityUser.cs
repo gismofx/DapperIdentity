@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DapperIdentity.Core.Models
+namespace CPE.DapperIdentity.Core.Models
 {
     public interface ICustomIdentityUser
     {

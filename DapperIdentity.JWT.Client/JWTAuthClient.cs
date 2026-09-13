@@ -1,4 +1,4 @@
-﻿using DapperIdentity.JWT.Models;
+﻿using CPE.DapperIdentity.JWT.Models;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -7,11 +7,10 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using HttpClientToCurl;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace DapperIdentity.JWT.Client
+namespace CPE.DapperIdentity.JWT.Client
 {
     public class JWTAuthClient
     {

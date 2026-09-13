@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using DapperIdentity.Core.Models;
-using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
-using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+using CPE.DapperIdentity.Core.Models;
+using IdentityRole = CPE.DapperIdentity.Core.Models.CustomIdentityRole;
+using IdentityUser = CPE.DapperIdentity.Core.Models.CustomIdentityUser;
 using System.Data;
 
-namespace DapperIdentity.Cookies.Server.Controllers
+namespace CPE.DapperIdentity.Cookies.Server.Controllers
 {
     [ApiController]
     class AuthController : ControllerBase

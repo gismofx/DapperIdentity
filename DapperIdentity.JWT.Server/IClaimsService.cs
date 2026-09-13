@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+using IdentityUser = CPE.DapperIdentity.Core.Models.CustomIdentityUser;
 
-namespace DapperIdentity.JWT.Server
+namespace CPE.DapperIdentity.JWT.Server
 {
     public interface IClaimsService
     {

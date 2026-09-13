@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DapperIdentity.Core.Models
+namespace CPE.DapperIdentity.Core.Models
 {
     [Table("IdentityUserClaim")]
     public class CustomIdentityUserClaim

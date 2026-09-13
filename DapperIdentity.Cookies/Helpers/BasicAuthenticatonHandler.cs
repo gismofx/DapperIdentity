@@ -12,10 +12,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
-using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+using IdentityRole = CPE.DapperIdentity.Core.Models.CustomIdentityRole;
+using IdentityUser = CPE.DapperIdentity.Core.Models.CustomIdentityUser;
 
-namespace DapperIdentity.Helpers
+namespace CPE.DapperIdentity.Helpers
     {
         public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
         {

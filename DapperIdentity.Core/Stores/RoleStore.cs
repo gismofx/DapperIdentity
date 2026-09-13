@@ -5,11 +5,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DapperRepository;
-using DapperIdentity.Core;
-using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
+using CPE.DapperIdentity.Core;
+using IdentityRole = CPE.DapperIdentity.Core.Models.CustomIdentityRole;
 
 
-namespace DapperIdentity.Stores
+namespace CPE.DapperIdentity.Stores
 {
     public class RoleStore : IRoleStore<IdentityRole>, IQueryableRoleStore<IdentityRole>
     {

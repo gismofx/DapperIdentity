@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
-namespace DapperIdentity.JWT.Client.Services;
+namespace CPE.DapperIdentity.JWT.Client.Services;
 
 /// <summary>
 /// Extension methods for registering DapperIdentity JWT client services

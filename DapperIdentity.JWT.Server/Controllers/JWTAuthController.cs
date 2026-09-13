@@ -1,25 +1,25 @@
-﻿using DapperIdentity.Core.Models;
-using DapperIdentity.JWT.Models;
+﻿using CPE.DapperIdentity.Core.Models;
+using CPE.DapperIdentity.JWT.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using DapperIdentity.Core.Services;
+using CPE.DapperIdentity.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
-using ForgotPasswordRequest = DapperIdentity.JWT.Models.ForgotPasswordRequest;
-using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
-using ResetPasswordRequest = DapperIdentity.JWT.Models.ResetPasswordRequest;
+using ForgotPasswordRequest = CPE.DapperIdentity.JWT.Models.ForgotPasswordRequest;
+using IdentityUser = CPE.DapperIdentity.Core.Models.CustomIdentityUser;
+using ResetPasswordRequest = CPE.DapperIdentity.JWT.Models.ResetPasswordRequest;
 
 
 
 
 //https://markjames.dev/blog/jwt-authorization-asp-net-core
 //https://www.c-sharpcorner.com/article/jwt-authentication-with-refresh-tokens-in-net-6-0/
-namespace DapperIdentity.JWT.Server.Server.Controllers;
+namespace CPE.DapperIdentity.JWT.Server.Server.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]

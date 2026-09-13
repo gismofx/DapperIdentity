@@ -1,6 +1,6 @@
-﻿using DapperIdentity.Cookies.Server.Controllers;
-using DapperIdentity.Services;
-using DapperIdentity.Stores;
+﻿using CPE.DapperIdentity.Cookies.Server.Controllers;
+using CPE.DapperIdentity.Services;
+using CPE.DapperIdentity.Stores;
 using DapperRepository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -9,10 +9,10 @@ using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
 using System.Data;
 using System.Reflection;
-using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
-using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+using IdentityRole = CPE.DapperIdentity.Core.Models.CustomIdentityRole;
+using IdentityUser = CPE.DapperIdentity.Core.Models.CustomIdentityUser;
 
-namespace DapperIdentity.Cookies.Server.Services;
+namespace CPE.DapperIdentity.Cookies.Server.Services;
 public static class DapperIdentityCookieServiceCollectionExtensions
 {
 

@@ -1,8 +1,8 @@
-﻿using DapperIdentity.Core.Models;
-using DapperIdentity.JWT.Server.Server.Controllers;
-using DapperIdentity.Services;
-using DapperIdentity.Services;
-using DapperIdentity.Stores;
+﻿using CPE.DapperIdentity.Core.Models;
+using CPE.DapperIdentity.JWT.Server.Server.Controllers;
+using CPE.DapperIdentity.Services;
+using CPE.DapperIdentity.Services;
+using CPE.DapperIdentity.Stores;
 using DapperRepository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,10 +17,10 @@ using System;
 using System.Data;
 using System.Reflection;
 using System.Security.Claims;
-using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
-using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+using IdentityRole = CPE.DapperIdentity.Core.Models.CustomIdentityRole;
+using IdentityUser = CPE.DapperIdentity.Core.Models.CustomIdentityUser;
 
-namespace DapperIdentity.JWT.Server.Services;
+namespace CPE.DapperIdentity.JWT.Server.Services;
 public static class ServiceCollectionExtensions
 {
     /// <summary>

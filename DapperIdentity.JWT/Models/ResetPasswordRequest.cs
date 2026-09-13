@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DapperIdentity.JWT.Models
+namespace CPE.DapperIdentity.JWT.Models
 {
 
     public class ResetPasswordRequest

@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+using IdentityUser = CPE.DapperIdentity.Core.Models.CustomIdentityUser;
 
-namespace DapperIdentity.Cookies.Server.Controllers
+namespace CPE.DapperIdentity.Cookies.Server.Controllers
 {
     [Route("/[controller]/[action]")]
     [ApiController]

@@ -5,15 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using DapperIdentity.Core.Models;
-using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
-using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+using CPE.DapperIdentity.Core.Models;
+using IdentityRole = CPE.DapperIdentity.Core.Models.CustomIdentityRole;
+using IdentityUser = CPE.DapperIdentity.Core.Models.CustomIdentityUser;
 using System.Data;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 
 //https://jasonwatmore.com/post/2019/10/21/aspnet-core-3-basic-authentication-tutorial-with-example-api#authenticate-model-cs
-namespace DapperIdentity.Cookies.Server.Controllers.BasicAuth
+namespace CPE.DapperIdentity.Cookies.Server.Controllers.BasicAuth
 {
     [ApiController]
     [Route("[controller]")]

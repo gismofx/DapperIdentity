@@ -1,4 +1,4 @@
-namespace DapperIdentity.Core.Services;
+namespace CPE.DapperIdentity.Core.Services;
 
 /// <summary>
 /// Sends the transactional emails the authentication endpoints need: the password-reset link used

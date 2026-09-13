@@ -8,13 +8,13 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
-using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
+using IdentityRole = CPE.DapperIdentity.Core.Models.CustomIdentityRole;
+using IdentityUser = CPE.DapperIdentity.Core.Models.CustomIdentityUser;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Identity;
 //using System.IdentityModel.Tokens.Jwt; Used directly below
 
-namespace DapperIdentity.JWT.Server;
+namespace CPE.DapperIdentity.JWT.Server;
 public class TokenService
 {
 

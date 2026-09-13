@@ -1,21 +1,23 @@
-using DapperIdentity.Stores;
+using CPE.DapperIdentity.Stores;
 using DapperRepository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
-using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
-using IdentityUserClaim = DapperIdentity.Core.Models.CustomIdentityUserClaim;
+using IdentityRole = CPE.DapperIdentity.Core.Models.CustomIdentityRole;
+using IdentityUser = CPE.DapperIdentity.Core.Models.CustomIdentityUser;
+using IdentityUserClaim = CPE.DapperIdentity.Core.Models.CustomIdentityUserClaim;
 
-namespace DapperIdentity.Services;
+namespace CPE.DapperIdentity.Services;
 
 /// <summary>
 /// Registration for the Dapper-backed Identity stores.
 /// </summary>
 /// <remarks>
 /// Moved here from the DapperIdentity ("vanilla") project along with the stores themselves. The
-/// namespace is deliberately unchanged so that no consumer's using directive has to move. Roughly
+/// namespace took the CPE. prefix in Session 33 (D-051) along with every other namespace in the
+/// library; it is CPE.DapperIdentity.Services rather than CPE.DapperIdentity.Core.Services because
+/// the move preserved its shape, which is a wrinkle worth knowing when hunting the using. Roughly
 /// 215 lines of commented-out cookie and Identity-UI registration helpers were dropped in the same
 /// move: they had been dead for the whole life of the JWT line, and they documented an API the
 /// README still advertised but the code no longer offered.

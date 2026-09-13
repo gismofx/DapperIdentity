@@ -1,9 +1,9 @@
 using Blazored.LocalStorage;
-using DapperIdentity.JWT.Models;
+using CPE.DapperIdentity.JWT.Models;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
-namespace DapperIdentity.JWT.Client;
+namespace CPE.DapperIdentity.JWT.Client;
 
 /// <summary>
 /// Single source of truth for JWT authentication lifecycle in Blazor WebAssembly.

@@ -8,7 +8,7 @@ using System.Data;
 using System.Security.Claims;
 //using JwtRoleAuthentication.Enums;
 
-namespace DapperIdentity.JWT.Models;
+namespace CPE.DapperIdentity.JWT.Models;
 
 public class RegistrationRequest
 {

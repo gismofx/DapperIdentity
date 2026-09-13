@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using Toolbelt.Blazor;
 
-namespace DapperIdentity.JWT.Client;
+namespace CPE.DapperIdentity.JWT.Client;
 
 /// <summary>
 /// Intercepts all outgoing <see cref="HttpClient"/> requests and stamps a valid

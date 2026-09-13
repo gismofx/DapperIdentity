@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using Dapper.Contrib.Extensions;
 
-namespace DapperIdentity.Core.Models
+namespace CPE.DapperIdentity.Core.Models
 {
     [Table("IdentityUser")]
     public class CustomIdentityUser : ICustomIdentityUser

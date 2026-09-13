@@ -1,6 +1,6 @@
 ﻿using Dapper.Contrib.Extensions;
 
-namespace DapperIdentity.Core.Models
+namespace CPE.DapperIdentity.Core.Models
 {
     [Table("IdentityRole")]
     public class CustomIdentityRole
