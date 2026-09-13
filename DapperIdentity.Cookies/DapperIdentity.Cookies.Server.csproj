@@ -7,14 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.3.9" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.18.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.4" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DapperIdentity.Core\DapperIdentity.Core.csproj" />
-    <ProjectReference Include="..\DapperIdentity\DapperIdentity.csproj" />
+    <!-- The DapperIdentity ("vanilla") project is gone. Everything this project used from it -
+         DapperIdentity.Services and DapperIdentity.Stores - now lives in DapperIdentity.Core. -->
   </ItemGroup>
 
 </Project>

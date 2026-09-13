@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Data;
 using System.Reflection;
+using System.Security.Claims;
 using IdentityRole = DapperIdentity.Core.Models.CustomIdentityRole;
 using IdentityUser = DapperIdentity.Core.Models.CustomIdentityUser;
 
@@ -81,6 +82,7 @@ public static class ServiceCollectionExtensions
                 IssuerSigningKey = new SymmetricSecurityKey(
                     System.Text.Encoding.UTF8.GetBytes(configuration.GetSection("JwtTokenSettings")["SymmetricSecurityKey"]!)
                 ),
+                RoleClaimType = ClaimTypes.Role,
                 
             };
         });

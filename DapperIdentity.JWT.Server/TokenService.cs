@@ -82,8 +82,8 @@ public class TokenService
 
             foreach (var role in usersRoles)
             {
-                //claims.Add(new Claim(ClaimTypes.Role, role));
-                claims.Add(new Claim("roles", role));
+                claims.Add(new Claim(ClaimTypes.Role, role));
+                //claims.Add(new Claim("roles", role));
             }
 
             if (_ClaimsService is not null) 

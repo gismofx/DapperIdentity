@@ -3,7 +3,7 @@ using DapperIdentity.JWT.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using DapperIdentity.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
@@ -30,7 +30,7 @@ public class JWTAuthController : ControllerBase
     //private readonly ApplicationDbContext _context;
     private readonly TokenService _tokenService;
 
-    private readonly IEmailSender _EmailSender;
+    private readonly IAuthEmailSender _EmailSender;
 
     private readonly ILogger<JWTAuthController> _logger;
 
@@ -38,7 +38,7 @@ public class JWTAuthController : ControllerBase
 
     public JWTAuthController(UserManager<IdentityUser> userManager,
                              TokenService tokenService,
-                             IEmailSender emailSender,
+                             IAuthEmailSender emailSender,
                              ILogger<JWTAuthController> logger,
                              IAppSettings appSettings)//Todo: Add options, IOptions<JWTControllerOptions> options) //ApplicationDbContext context
     {
@@ -139,6 +139,7 @@ public class JWTAuthController : ControllerBase
         if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
         {
             // Don't reveal that the user does not exist or is not confirmed
+            _logger.LogInformation($"'Forgot Password' flow rejected for user: {forgotPasswordRequest.Email}. User is not found or email is not confirmed.");
             return Ok();
             return RedirectToPage("./ForgotPasswordConfirmation");
         }
