@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- JwtBearer used to arrive transitively through the DapperIdentity ("vanilla") project.
+         That reference is gone, so it is declared directly here where it is actually used
+         (ServiceCollectionExtensions.cs AddJwtBearer). -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.9" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.3.9" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.18.0" />
@@ -20,7 +24,11 @@
   <ItemGroup>
     <ProjectReference Include="..\DapperIdentity.Core\DapperIdentity.Core.csproj" />
     <ProjectReference Include="..\DapperIdentity.JWT\DapperIdentity.JWT.csproj" />
-    <ProjectReference Include="..\DapperIdentity\DapperIdentity.csproj" />
+    <!-- The DapperIdentity ("vanilla") project reference is deliberately gone. It was carried for
+         three classes - UserStore, RoleStore, CustomSignInManager - which now live in
+         DapperIdentity.Core, and it dragged Microsoft.AspNetCore.Identity.UI (a Bootstrap5 Razor
+         Pages package), AddRazorSupportForMvc, Authentication.Cookies and Mvc.ViewFeatures into
+         every API that consumes this library. -->
   </ItemGroup>
 
 </Project>

@@ -17,7 +17,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DapperIdentity.Core\DapperIdentity.Core.csproj" />
-    <ProjectReference Include="..\DapperIdentity\DapperIdentity.csproj" />
+    <!-- The DapperIdentity ("vanilla") project is gone. Everything this project used from it -
+         DapperIdentity.Services and DapperIdentity.Stores - now lives in DapperIdentity.Core. -->
   </ItemGroup>
 
 </Project>
