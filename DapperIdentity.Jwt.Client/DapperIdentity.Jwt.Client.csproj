@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- The namespaces carry the CPE. prefix (D-051) while the project file does not, so
+         RootNamespace has to be stated - otherwise it defaults to the project name and every new
+         file lands in the old namespace. -->
+    <RootNamespace>CPE.DapperIdentity.Jwt.Client</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- HttpClientToCurl removed 2026-09-13: a request-to-curl debug aid whose only calls in
+         JWTAuthClient were already commented out, so it was a dependency every consumer would
+         restore for nothing. -->
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageReference Include="Toolbelt.Blazor.HttpClientInterceptor" Version="10.2.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+  </ItemGroup>
+
+  <!-- Library pins are MINIMUMS, not latest. A PackageReference in a library is a floor every
+       consumer must meet: pinning 10.0.12 here made DVM.Wasm's own 10.0.11 reference an NU1605
+       downgrade and failed the consumer's restore. Pin the lowest version that works and let
+       consumers float up. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DapperIdentity.Abstractions\DapperIdentity.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

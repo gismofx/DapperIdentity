@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- net6.0 dropped: it is out of support, and FrameworkReference below needs a supported
+         ASP.NET Core runtime pack. net10.0 added to match the other CPE packages and .NET 8's
+         2026-11-10 EOL. -->
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- The namespaces carry the CPE. prefix (D-051) while the project file does not, so
+         RootNamespace has to be stated - otherwise it defaults to the project name and every new
+         file lands in the old namespace. -->
+    <RootNamespace>CPE.DapperIdentity.Stores</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The Identity types (SignInManager, IUserStore, IRoleStore, UserManager) come from the
+         shared framework, NOT from a package. The old Microsoft.AspNetCore.Identity 2.3.9
+         PackageReference resolved the ASP.NET Core *2.x* SignInManager, whose constructor takes
+         six arguments - which is why CustomSignInManager failed to compile with CS1729 the moment
+         this project stopped borrowing Identity.UI's modern reference through the vanilla project. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.86" />
+    <!-- Dapper.Contrib is unmaintained (2.0.78 is both the latest and the last release, 2019) but
+         it is load-bearing: the entity models are attributed with its [Table]/[ExplicitKey], and
+         TheDapperRepository reads those attributes. Replacing it is a change to TheDapperRepository
+         and breaks every consumer, so it is tracked as its own milestone rather than carried
+         silently. Not vulnerable: "dotnet list package" with the vulnerable switch reports clean. -->
+    <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
+    <PackageReference Include="TheDapperRepository" Version="1.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- ICustomIdentityUser and IAuthEmailSender live in Abstractions: they are contracts a
+         consumer implements, so they must be reachable without taking the Dapper stack. -->
+    <ProjectReference Include="..\DapperIdentity.Abstractions\DapperIdentity.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
