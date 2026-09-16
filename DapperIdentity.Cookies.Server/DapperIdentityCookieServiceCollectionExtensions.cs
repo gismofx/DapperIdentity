@@ -1,5 +1,5 @@
-﻿using CPE.DapperIdentity.Cookies.Server.Controllers;
-using Microsoft.Extensions.DependencyInjection;
+﻿using CPE.DapperIdentity.Cookies.Server;
+using CPE.DapperIdentity.Cookies.Server.Controllers;
 using CPE.DapperIdentity.Stores;
 using DapperRepository;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -23,10 +23,18 @@ public static class DapperIdentityCookieServiceCollectionExtensions
     /// <returns></returns>
     public static IServiceCollection AddIdentityControllers(this IServiceCollection services)
     {
+        // Routes IdentityController and nothing else from this assembly. Until 2026-09-16 this
+        // method called AddApplicationPart alone, which routes EVERY controller here into the
+        // consumer - which is how an unfinished BasicAuthController.Login became a live
+        // [AllowAnonymous] endpoint in a production app. The allow-list is the fix; see
+        // SelectedControllerFeatureProvider.
         var assembly = typeof(IdentityController).GetTypeInfo().Assembly;
-        var part = new AssemblyPart(assembly);
-        services.AddMvcCore().AddControllersAsServices().AddApplicationPart(assembly);// ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(part));
-        //services.AddControllers().AddControllersAsServices();
+        services.AddMvcCore()
+                .AddControllersAsServices()
+                .AddApplicationPart(assembly)
+                .ConfigureApplicationPartManager(apm =>
+                    apm.FeatureProviders.Add(
+                        new SelectedControllerFeatureProvider(typeof(IdentityController))));
         return services;
     }
 

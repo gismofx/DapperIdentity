@@ -26,9 +26,11 @@ namespace CPE.DapperIdentity.Cookies.Server.Helpers
                 IOptionsMonitor<AuthenticationSchemeOptions> options,
                 ILoggerFactory logger,
                 UrlEncoder encoder,
-                ISystemClock clock,
                 SignInManager<IdentityUser> signInManager)
-                : base(options, logger, encoder, clock)
+                // ISystemClock and the four-argument base are obsolete as of .NET 8 (use
+                // TimeProvider). The handler took the clock only to pass it along, so dropping it
+                // costs nothing; the handler is DI-constructed, so no caller changes.
+                : base(options, logger, encoder)
             {
                 _SignInManager = signInManager;
             }

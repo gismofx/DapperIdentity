@@ -1,8 +1,6 @@
 ﻿using CPE.DapperIdentity.Abstractions;
 using CPE.DapperIdentity.Stores.Models;
 using CPE.DapperIdentity.Jwt.Server.Controllers;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using CPE.DapperIdentity.Stores;
 using DapperRepository;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -40,10 +38,15 @@ public static class ServiceCollectionExtensions
     {
         services.TryAddDapperIdentityDatabaseStores();
         services.AddScoped<TokenService>();
+        // Route JwtAuthController and nothing else from this assembly. Adding the AssemblyPart on
+        // its own would hand the consumer every controller this library happens to contain, now
+        // and in future - see SelectedControllerFeatureProvider for why the narrowing has to be a
+        // removal and why it is scoped to this assembly.
         var assembly = typeof(JwtAuthController).GetTypeInfo().Assembly;
-        var part = new AssemblyPart(assembly);
-        services.AddControllers().PartManager.ApplicationParts.Add(part);
-        //services.AddMvcCore().AddControllersAsServices().AddApplicationPart(assembly);
+        var builder = services.AddControllers();
+        builder.PartManager.ApplicationParts.Add(new AssemblyPart(assembly));
+        builder.PartManager.FeatureProviders.Add(
+            new SelectedControllerFeatureProvider(typeof(JwtAuthController)));
 
 
 

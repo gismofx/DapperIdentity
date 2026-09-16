@@ -38,37 +38,25 @@ namespace CPE.DapperIdentity.Cookies.Server.Controllers.BasicAuth
             return File("~/index.html", "text/html");
         }
 
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("Login")]
-        public async Task<IActionResult> Login()//[FromBody] AuthenticateModel model)
-        {
-            var model = new AuthenticateModel() { Username = "asadf", Password = "asdf" };
-            var result = await _SignInManager.PasswordSignInAsync(model.Username,model.Password,false, lockoutOnFailure: false);
-            if (result.Succeeded)
-            {
-                return Ok(model);
-            }
-            else
-            {
-                return Ok(model);
-                //return BadRequest(new { message = "Username or password is incorrect" });
-            }
-        }
-        [Authorize]
-        [Route("Test")]
-        [HttpPost]
-        public async Task<IActionResult> Test()
-        {
-            if (true)
-            {
-                return await Task.FromResult(Ok());
-            }
-            else
-            {
-                return await Task.FromResult(BadRequest(new { message = "Username or password is incorrect" }));
-            }
-        }
+        // Removed 2026-09-15: an [AllowAnonymous] POST /Login that ignored the request body (its
+        // [FromBody] parameter was commented out), signed in with hardcoded "asadf"/"asdf",
+        // returned Ok on BOTH branches because the failure BadRequest was commented out, and
+        // serialised AuthenticateModel - Password included - into the 200 response.
+        //
+        // It could not be driven with caller-supplied credentials, so it was not an auth bypass,
+        // but it was routed into every consumer that calls AddIdentityControllers(), which is not
+        // the opt-in its name suggests. Nothing can legitimately depend on an endpoint that
+        // ignores its input and always succeeds, so removing it cannot break a working flow.
+        //
+        // Spa() above is deliberately left alone: it serves a real file and may be load-bearing.
+        // Removed 2026-09-15: a routed [HttpPost("Test")] endpoint whose body was
+        // `if (true) return Ok(); else return BadRequest(...)` - it succeeded unconditionally and
+        // authenticated nothing. Nothing in this repo or in DVMApp referenced it by name.
+        //
+        // NOTE: this controller is NOT opt-in. AddIdentityControllers() calls
+        // AddApplicationPart(assembly), which routes every controller in this assembly - this one
+        // included. AddBasicAuthController() registers no controller at all; it only adds the
+        // stores, so its name is misleading and it is not the gate it looks like.
 
 
     }
